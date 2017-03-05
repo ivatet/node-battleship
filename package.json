@@ -1,11 +1,16 @@
 {
   "name": "node-test",
+  "repository": "git@github.com:xpdu/node-test.git",
   "version": "1.0.0",
-  "description": "",
+  "description": "Node.js test app",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC"
+  "author": "xpdu",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.0",
+    "mustache": "^2.3.0"
+  }
 }
