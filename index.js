@@ -1,23 +1,22 @@
 const fs = require('fs')
-const http = require('http')
+const express = require('express')
 const mustache = require('mustache')
 const port = 3000
 
-var template = fs.readFileSync(__dirname + '/index.mst', 'utf8').toString()
+const template = fs.readFileSync(__dirname + '/index.mst', 'utf8').toString()
 
-const requestHandler = (request, response) => {
+const app = express()
+
+app.get('/', function(req, rsp) {
 	templateData = {
-		url: request.url
+		test: req.query.test
 	}
-	response.end(mustache.to_html(template, templateData))
-}
+	rsp.end(mustache.to_html(template, templateData))
+})
 
-const server = http.createServer(requestHandler)
+const server = app.listen(3000, function() {
+	var host = server.address().address
+	var port = server.address().port
 
-server.listen(port, (err) => {  
-	if (err) {
-		return console.log('something bad happened', err)
-	}
-
-	console.log(`server is listening on ${port}`)
+	console.log("Example app listening at http://%s:%s", host, port)
 })
