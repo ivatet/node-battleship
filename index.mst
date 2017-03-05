@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
 	<meta charset="utf-8">
-	<title>Node test</title>
+	<link rel="icon" href="favicon.ico" type="image/x-icon" />
+	<title>Node.js test app</title>
 </head>
 <body>
 	<p>Hello Node.js Express server!<p>

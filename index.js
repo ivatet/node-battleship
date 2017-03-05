@@ -1,11 +1,16 @@
 const fs = require('fs')
+const path = require('path')
+const favicon = require('serve-favicon')
 const express = require('express')
 const mustache = require('mustache')
+
 const port = 3000
 
-const template = fs.readFileSync(__dirname + '/index.mst', 'utf8').toString()
+const template = fs.readFileSync(path.join(__dirname, 'index.mst'), 'utf8').toString()
 
 const app = express()
+
+app.use(favicon(path.join(__dirname, 'favicon.ico')))
 
 app.get('/', function(req, rsp) {
 	templateData = {
