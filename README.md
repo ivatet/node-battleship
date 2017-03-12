@@ -4,4 +4,4 @@ Hello world Node.js app.
 
 ## How to run
 
-    % nodejs index.js
+    % nodejs app.js
