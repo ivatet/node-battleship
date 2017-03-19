@@ -12,6 +12,7 @@
   "dependencies": {
     "express": "^4.15.0",
     "socketio": "^1.0.0",
+    "validator": "^7.0.0",
     "winston": "^2.3.1"
   }
 }

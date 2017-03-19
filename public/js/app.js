@@ -5,27 +5,30 @@ $(function() {
 	var utils = window.utils;
 
 	app.PlayerStates = {
-		NOT_CONNECTED: 1,
-		NOT_JOINED: 2,
-		WAIT_PLAYERS: 3,
-		YOUR_ATTACK: 4,
-		THEY_ATTACK: 5,
-		FINISH: 6
+		NOT_JOINED: 1,
+		WAIT_PLAYERS: 2,
+		YOUR_ATTACK: 3,
+		THEY_ATTACK: 4,
+		FINISH: 5
 	},
 
-	app.state = app.PlayerStates.NOT_CONNECTED;
+	app.state = app.PlayerStates.NOT_JOINED;
 
-	app.socket = null;
+	app.socket = io();
 
 	$('#join_button').click(function() {
-		if (app.state !== app.PlayerStates.NOT_CONNECTED)
+		if (app.state !== app.PlayerStates.NOT_JOINED)
 			return;
 
-		app.socket = io();
+		app.socket.emit(utils.ClientRequests.ON_JOIN, {
+			"battle_id": null,
+			"fleet": null,
+			"fleet_name": $('#fleet_name').val()
+		});
 
-		app.socket.emit(utils.ClientRequests.ON_JOIN, {});
-
-		app.state = app.PlayerStates.NOT_JOINED;
+		app.socket.on(utils.ServerResponses.ON_MESSAGE, function(data) {
+			$('#server_message').text(data.msg);
+		});
 
 		app.socket.on(utils.ServerResponses.ON_JOIN, function(data) {
 			$('#battle_id').text(data.battle_id);
