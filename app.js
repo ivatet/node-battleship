@@ -81,23 +81,54 @@ io.on('connection', function(client) {
 
 		var tuple = validateFleetName(data.fleet_name)
 		if (!tuple[0]) {
-			logger.debug('fleet name validation failed')
 			message(tuple[1])
 			return
 		}
 
+		var connection = {
+			connection: client,
+			fleet_name: data.fleet_name,
+			fleet_json: data.fleet_json
+		}
+
 		if (!data.battle_id) {
-			data.battle_id = generateId()
+			var battle = {
+				battle_id: generateId(),
+				battle_state: BattleStates.WAIT_PLAYERS,
+				connections: [connection]
+			}
+
+			battles.push(battle)
+
+			client.emit(utils.ServerResponses.ON_JOIN, {
+				battle_id: battle.battle_id
+			})
+
 		} else {
-			var tuple = validateBattleId(data.battle_id)
+			var tuple = validateBattleId(data.battle_id.toString())
 			if (!tuple[0]) {
-				logger.debug('battle ID validation failed')
 				message(tuple[1])
 				return
 			}
-		}
 
-		client.emit(utils.ServerResponses.ON_JOIN, { "battle_id" : data.battle_id })
+			var battle = battles.find(function(battle) {
+				return battle.battle_id === data.battle_id;
+			})
+
+			if (!battle) {
+				message("Battle not found!")
+				return
+			}
+
+			if (battle.battle_state !== BattleStates.WAIT_PLAYERS) {
+				message("It is not your business!")
+				return
+			}
+
+			battle.connections.push(connection)
+
+			/* TODO: Start the game */
+		}
 	})
 
 	client.on('disconnect', function(client) {

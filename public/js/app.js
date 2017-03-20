@@ -21,9 +21,9 @@ $(function() {
 			return;
 
 		app.socket.emit(utils.ClientRequests.ON_JOIN, {
-			"battle_id": null,
-			"fleet": null,
-			"fleet_name": $('#fleet_name').val()
+			battle_id: null,
+			fleet_json: null,
+			fleet_name: $('#fleet_name').val()
 		});
 
 		app.socket.on(utils.ServerResponses.ON_MESSAGE, function(data) {
