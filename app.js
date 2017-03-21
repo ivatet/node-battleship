@@ -29,6 +29,10 @@ logger.level = 'debug'
 app.use(express.static('public'))
 app.use(express.static('shared'))
 
+app.get('/id*', function(req, res) {
+	res.sendFile(__dirname + '/public/index.html')
+})
+
 const BattleStates = {
 	WAIT_PLAYERS: 1,
 	P1_ATTACK: 2,
@@ -101,7 +105,7 @@ io.on('connection', function(client) {
 			battles.push(battle)
 
 			client.emit(utils.ServerResponses.ON_JOIN, {
-				battle_id: battle.battle_id
+				battle_id: 'id' + battle.battle_id.toString()
 			})
 
 		} else {

@@ -32,6 +32,7 @@ $(function() {
 
 		app.socket.on(utils.ServerResponses.ON_JOIN, function(data) {
 			$('#battle_id').text(data.battle_id);
+			$('#battle_id').attr('href', data.battle_id);
 
 			app.state = app.PlayerStates.WAIT_PLAYERS;
 		});
