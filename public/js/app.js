@@ -16,8 +16,6 @@ $(function() {
 
 	app.socket = io();
 
-	console.log(window.pathname);
-
 	$('#join_button').click(function() {
 		if (app.state !== app.PlayerStates.NOT_JOINED)
 			return;
@@ -41,6 +39,16 @@ $(function() {
 			$('#battle_id').attr('href', data.battle_id);
 
 			app.state = app.PlayerStates.WAIT_PLAYERS;
+		});
+
+		app.socket.on(utils.ServerResponses.ON_YOUR_ATTACK, function(data) {
+			app.state = app.PlayerStates.YOUR_ATTACK;
+			console.log("Your attack!")
+		});
+
+		app.socket.on(utils.ServerResponses.ON_THEY_ATTACK, function(data) {
+			app.state = app.PlayerStates.THEY_ATTACK;
+			console.log("Defend yourself!")
 		});
 	});
 });

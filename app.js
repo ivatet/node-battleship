@@ -69,6 +69,18 @@ io.on('connection', function(client) {
 		return [true, null]
 	}
 
+	updateClients = function(battle) {
+		var attackIdx = BattleStates.P1_ATTACK ? 0 : 1
+
+		for (var i = 0; i < 2; i++) {
+			var client = battle.connections[i].connection
+			var event = utils.ServerResponses.ON_THEY_ATTACK
+			if (i === attackIdx)
+				event = utils.ServerResponses.ON_YOUR_ATTACK
+			client.emit(event, {})
+		}
+	}
+
 	client.on(utils.ClientRequests.ON_JOIN, function(data) {
 		logger.debug('client join request with data: ' + JSON.stringify(data))
 
@@ -114,7 +126,10 @@ io.on('connection', function(client) {
 
 			battle.connections.push(connection)
 
-			/* TODO: Start the game */
+			var random_binary = Math.floor(Math.random() * 2)
+			battle.battle_state = random_binary ? BattleStates.P1_ATTACK : BattleStates.P2_ATTACK
+
+			updateClients(battle)
 		}
 	})
 
