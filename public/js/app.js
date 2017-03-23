@@ -16,12 +16,18 @@ $(function() {
 
 	app.socket = io();
 
+	console.log(window.pathname);
+
 	$('#join_button').click(function() {
 		if (app.state !== app.PlayerStates.NOT_JOINED)
 			return;
 
+		var battle_id = null
+		if (window.location.pathname.length > 1)
+			battle_id = window.location.pathname.substring(1);
+
 		app.socket.emit(utils.ClientRequests.ON_JOIN, {
-			battle_id: null,
+			battle_id: battle_id,
 			fleet_json: null,
 			fleet_name: $('#fleet_name').val()
 		});

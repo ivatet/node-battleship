@@ -13,7 +13,7 @@ const idRange = {
 	max: 1000000
 }
 
-generateId = () => Math.floor(Math.random() * (idRange.max - idRange.min + 1) + idRange.min)
+generateId = () => "id" + Math.floor(Math.random() * (idRange.max - idRange.min + 1) + idRange.min)
 
 const logger = new (winston.Logger)({
 	transports: [
@@ -69,17 +69,6 @@ io.on('connection', function(client) {
 		return [true, null]
 	}
 
-	validateBattleId = function(battle_id) {
-		const msg = "I forgot how to count!"
-		if (typeof battle_id !== 'string' )
-			return [false, msg]
-
-		if (!validator.isInt(battle_id, idRange))
-			return [false, msg]
-
-		return [true, null]
-	}
-
 	client.on(utils.ClientRequests.ON_JOIN, function(data) {
 		logger.debug('client join request with data: ' + JSON.stringify(data))
 
@@ -105,16 +94,10 @@ io.on('connection', function(client) {
 			battles.push(battle)
 
 			client.emit(utils.ServerResponses.ON_JOIN, {
-				battle_id: 'id' + battle.battle_id.toString()
+				battle_id: battle.battle_id
 			})
 
 		} else {
-			var tuple = validateBattleId(data.battle_id.toString())
-			if (!tuple[0]) {
-				message(tuple[1])
-				return
-			}
-
 			var battle = battles.find(function(battle) {
 				return battle.battle_id === data.battle_id;
 			})
