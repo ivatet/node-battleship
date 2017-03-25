@@ -14,7 +14,9 @@ $(function () {
 
   app.state = app.PlayerStates.NOT_JOINED;
 
-  app.socket = io();
+  app.socket = io('/', {
+    reconnection: false
+  });
 
   $('#join_button').click(function () {
     if (app.state !== app.PlayerStates.NOT_JOINED) {
