@@ -1,20 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-	<meta charset="utf-8">
-	<link rel="icon" href="favicon.ico" type="image/x-icon" />
-	<script src="/socket.io/socket.io.js"></script>
-	<link rel="stylesheet" href="/css/bootstrap.min.css">
-	<script src="/js/jquery.min.js"></script>
-	<script src="/js/bootstrap.min.js"></script>
-	<script src="/js/utils.js"></script>
-	<script src="/js/app.js"></script>
-	<title>Battleship (game)</title>
-</head>
-<body>
-	<p id="server_message">Welcome to Battleship!</p>
-	<p>Battle ID is <a id="battle_id" href="#"></a></p>
-	<p>Fleet name is <input type="text" id="fleet_name"></p>
-	<button id="join_button">Join</button>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <script src="/socket.io/socket.io.js"></script>
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+    <script src="/js/jquery.min.js"></script>
+    <script src="/js/bootstrap.min.js"></script>
+    <script src="/js/utils.js"></script>
+    <script src="/js/app.js"></script>
+    <title>Battleship (game)</title>
+  </head>
+  <body>
+    <div class="container">
+
+      <div class="page-header">
+        <h1>Battleship</h1>
+        <p class="lead">A guessing game for two players</p>
+      </div>
+
+      <div class="row">
+        <div class="col-md-2">
+          <p id="serverMessage">Welcome to Battleship!</p>
+          <p>Battle ID is <a id="battleId" href="#"></a></p>
+          <br>
+        </div>
+        <div class="col-md-8">
+          <form class="form-horizontal">
+            <div class="form-group">
+              <label class="col-sm-2 control-label" for="fleetNameInput">Fleet</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="fleetNameInput" placeholder="Sir Francis Drake">
+                <span class="help-block">Between 3 and 16 characters</span>
+              </div>
+            </div>
+            <div class="form-group">
+              <div class="col-sm-offset-2 col-sm-10">
+                <button id="joinButton" type="button" class="btn btn-default">Start!</button>
+              </div>
+            </div>
+          </form>
+          <br>
+        </div>
+        <div class="col-md-2">
+          <table class="table">
+            <tr id="joiningRow" class="active"><td>Joining</td></tr>
+            <tr id="attackingRow"><td>Attacking</td></tr>
+            <tr id="defendingRow"><td>Defending</td></tr>
+            <tr id="celebratingRow"><td>Celebrating</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>

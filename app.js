@@ -56,7 +56,7 @@ io.on('connection', function (client) {
 
   var validateFleetName = function (fleetName) {
     if (typeof fleetName !== 'string') {
-      return [false, "Don't forget to specify fleet name!"]
+      return [false, "Don't forget to specify your fleet name!"]
     }
 
     var lengthRange = {
@@ -65,11 +65,7 @@ io.on('connection', function (client) {
     }
 
     if (!validator.isLength(fleetName, lengthRange)) {
-      return [false, 'Fleet name must be not too short and not too long!']
-    }
-
-    if (!validator.isAlphanumeric(fleetName)) {
-      return [false, 'Fleet name looks suspicious :-. Try again!']
+      return [false, 'Between 3 and 16 characters!']
     }
 
     return [true, null]
@@ -99,7 +95,7 @@ io.on('connection', function (client) {
 
     var connection = {
       connection: client,
-      fleetName: data.fleetName,
+      fleetName: validator.escape(data.fleetName),
       fleetJson: data.fleetJson
     }
 
