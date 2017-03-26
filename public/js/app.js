@@ -19,8 +19,20 @@ $(function () {
   });
 
   app.setState = function (newState) {
-    console.log('new state is ' + newState);
     app.state = newState;
+
+    var stateMapping = {}
+    stateMapping[app.PlayerStates.EMPTY]  = 'joiningRow';
+    stateMapping[app.PlayerStates.WAIT]   = 'joiningRow';
+    stateMapping[app.PlayerStates.ATTACK] = 'attackingRow';
+    stateMapping[app.PlayerStates.DEFEND] = 'defendingRow';
+    stateMapping[app.PlayerStates.FINISH] = 'celebratingRow';
+
+    var activeCssClass = 'active';
+    var rowStateCssClass = 'stateRow';
+
+    $('.' + rowStateCssClass).removeClass(activeCssClass);
+    $('#' + stateMapping[app.state]).addClass(activeCssClass);
   };
 
   /* Handle UI controls */
