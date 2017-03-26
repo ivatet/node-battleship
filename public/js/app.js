@@ -5,14 +5,14 @@ $(function () {
   var utils = window.utils;
 
   app.PlayerStates = {
-    NOT_JOINED: 1,
-    WAIT_PLAYERS: 2,
-    YOUR_ATTACK: 3,
-    THEY_ATTACK: 4,
+    EMPTY: 1,
+    WAIT: 2,
+    ATTACK: 3,
+    DEFEND: 4,
     FINISH: 5
   }
 
-  app.state = app.PlayerStates.NOT_JOINED;
+  app.state = app.PlayerStates.EMPTY;
 
   app.socket = io('/', {
     reconnection: false
@@ -23,8 +23,9 @@ $(function () {
     app.state = newState;
   };
 
+  /* Handle UI controls */
   $('#joinButton').click(function () {
-    if (app.state !== app.PlayerStates.NOT_JOINED) {
+    if (app.state !== app.PlayerStates.EMPTY) {
       return;
     }
 
@@ -39,25 +40,6 @@ $(function () {
       fleetJson: null,
       fleetName: $('#fleetNameInput').val()
     });
-
-    app.socket.on(utils.ServerResponses.ON_MESSAGE, function (data) {
-      $('#serverMessage').text(data.msg);
-    });
-
-    app.socket.on(utils.ServerResponses.ON_JOIN, function (data) {
-      $('#battleId').text(data.battleId);
-      $('#battleId').attr('href', data.battleId);
-
-      app.setState(app.PlayerStates.WAIT_PLAYERS);
-    });
-
-    app.socket.on(utils.ServerResponses.ON_YOUR_ATTACK, function (data) {
-      app.setState(app.PlayerStates.YOUR_ATTACK);
-    });
-
-    app.socket.on(utils.ServerResponses.ON_THEY_ATTACK, function (data) {
-      app.setState(app.PlayerStates.THEY_ATTACK);
-    });
   });
 
   $('#fleetNameInput').keypress(function (e) {
@@ -66,5 +48,25 @@ $(function () {
       $('#joinButton').click();
       e.preventDefault();
     }
+  });
+
+  /* Handle server reponses */
+  app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
+    $('#serverMessage').text(data.msg);
+  });
+
+  app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
+    $('#battleId').text(data.battleId);
+    $('#battleId').attr('href', data.battleId);
+
+    app.setState(app.PlayerStates.WAIT);
+  });
+
+  app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
+    app.setState(app.PlayerStates.ATTACK);
+  });
+
+  app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
+    app.setState(app.PlayerStates.DEFEND);
   });
 });
