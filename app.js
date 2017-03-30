@@ -47,13 +47,8 @@ const handleIndex = function (req, res) {
   res.end(mustache.to_html(template, templateData))
 }
 
-app.get('/', function (req, res) {
-  handleIndex(req, res)
-})
-
-app.get('/id*', function (req, res) {
-  handleIndex(req, res)
-})
+app.get('/', handleIndex)
+app.get('/id*', handleIndex)
 
 const BattleStates = {
   WAIT: 1,
