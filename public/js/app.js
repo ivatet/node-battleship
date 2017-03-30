@@ -18,6 +18,25 @@ $(function () {
     reconnection: false
   });
 
+  /* Init */
+  var board = "";
+
+  for (var j = 0; j < 10; j++) {
+    var rowId = 'mainRow' + j;
+    board += '<div id="' + rowId + '" class="custom-row">';
+
+    for (var i = 0; i < 10; i++) {
+      var cellId = 'mainCell' + j;
+      cellId += i;
+      board += '<div id="' + cellId + '" class="bg-info custom-cell">';
+      board += '</div>';
+    }
+
+    board += '</div>';
+  }
+
+  $("#mainBoard").append(board);
+
   app.setState = function (newState) {
     app.state = newState;
 
