@@ -1,13 +1,17 @@
+const fs = require('fs')
 const path = require('path')
 const winston = require('winston')
 const express = require('express')
+const mustache = require('mustache')
 const app = express()
 const server = require('http').createServer(app)
 const io = require('socket.io')(server)
 const validator = require('validator')
-const utils = require('./shared/js/utils.js')
+const utils = require(path.join(__dirname, 'shared', 'js', 'utils.js'))
 
 const port = 3000
+
+const template = fs.readFileSync(path.join(__dirname, 'public', 'index.html.mst'), 'utf8').toString()
 
 const idRange = {
   min: 1000,
@@ -27,14 +31,28 @@ const logger = new (winston.Logger)({
 
 logger.level = 'debug'
 
-app.use('/js', express.static('node_modules/bootstrap/dist/js'))
-app.use('/js', express.static('node_modules/jquery/dist'))
-app.use('/css', express.static('node_modules/bootstrap/dist/css'))
-app.use('/', express.static('public'))
-app.use('/', express.static('shared'))
+console.log(path.join(__dirname, 'public', 'js'))
+
+app.use('/js', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'js')))
+app.use('/js', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
+app.use('/js', express.static(path.join(__dirname, 'public', 'js')))
+app.use('/js', express.static(path.join(__dirname, 'shared', 'js')))
+
+app.use('/css', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css')))
+app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
+
+const handleIndex = function (req, res) {
+  templateData = {
+  }
+  res.end(mustache.to_html(template, templateData))
+}
+
+app.get('/', function (req, res) {
+  handleIndex(req, res)
+})
 
 app.get('/id*', function (req, res) {
-  res.sendFile(path.join(__dirname, '/public/index.html'))
+  handleIndex(req, res)
 })
 
 const BattleStates = {
