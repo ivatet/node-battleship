@@ -41,13 +41,47 @@ app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
 
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
-const handleIndex = function (req, res) {
+const createFleet = function () {
+  var fleet = []
+
+  fleet.push({
+    x: 3,
+    y: 2,
+    length: 4,
+    direction: utils.Directions.HOR
+  })
+
+  return fleet
+}
+
+const renderFleet = function (fleet) {
+  var canvas = Array(100).fill(utils.CellTypes.EMPTY)
+
+  fleet.forEach(function (ship) {
+    var d = {
+      x: ship.direction === utils.Directions.HOR ? 1 : 0,
+      y: ship.direction === utils.Directions.VER ? 1 : 0
+    }
+
+    for (var i = 0; i < ship.length; i++) {
+      var x = ship.x + d.x * i
+      var y = ship.y + d.y * i
+      canvas[y * 10 + x] = utils.CellTypes.SHIP
+    }
+  })
+
+  return canvas
+}
+
+const renderTemplateData = function (canvas) {
   var rows = []
   for (var j = 0; j < 10; j++) {
     var cells = []
     for (var i = 0; i < 10; i++) {
+      var idx = j * 10 + i
       cells.push({
-        id: j * 10 + i
+        idx: idx,
+        style: utils.cellStyle(canvas[idx])
       })
     }
     rows.push({
@@ -55,9 +89,15 @@ const handleIndex = function (req, res) {
     })
   }
 
-  var templateData = {
+  return {
     rows: rows
   }
+}
+
+const handleIndex = function (req, res) {
+  var fleet = createFleet()
+  var canvas = renderFleet(fleet)
+  var templateData = renderTemplateData(canvas)
   res.end(mustache.to_html(template, templateData))
 }
 

@@ -11,4 +11,22 @@
     ON_DEFEND: 'on_defend',
     ON_FINISH: 'on_finish'
   };
+
+  exports.CellTypes = {
+    EMPTY: 'empty',
+    SHIP: 'ship'
+  };
+
+  exports.cellStyle = function (cellType) {
+    var mapping = {};
+    mapping[exports.CellTypes.EMPTY] = 'bg-info';
+    mapping[exports.CellTypes.SHIP] = 'bg-primary';
+
+    return mapping[cellType];
+  }
+
+  exports.Directions = {
+    HOR: 'hor',
+    VER: 'ver'
+  };
 })(typeof exports === 'undefined' ? window.utils = {} : exports);

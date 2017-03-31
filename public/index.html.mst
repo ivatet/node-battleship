@@ -41,7 +41,7 @@
                 {{#rows}}
                 <div class="custom-row">
                   {{#cells}}
-                  <div id="main-cell-{{id}}" class="bg-info custom-cell">
+                  <div id="main-cell-{{idx}}" class="{{style}} custom-cell">
                   </div>
                   {{/cells}}
                 </div>
