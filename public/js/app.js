@@ -22,21 +22,21 @@ $(function () {
     app.state = newState;
 
     var stateMapping = {}
-    stateMapping[app.PlayerStates.EMPTY]  = 'joiningRow';
-    stateMapping[app.PlayerStates.WAIT]   = 'joiningRow';
-    stateMapping[app.PlayerStates.ATTACK] = 'attackingRow';
-    stateMapping[app.PlayerStates.DEFEND] = 'defendingRow';
-    stateMapping[app.PlayerStates.FINISH] = 'celebratingRow';
+    stateMapping[app.PlayerStates.EMPTY]  = 'joining-row';
+    stateMapping[app.PlayerStates.WAIT]   = 'joining-row';
+    stateMapping[app.PlayerStates.ATTACK] = 'attacking-row';
+    stateMapping[app.PlayerStates.DEFEND] = 'defending-row';
+    stateMapping[app.PlayerStates.FINISH] = 'celebrating-row';
 
     var activeCssClass = 'active';
-    var rowStateCssClass = 'stateRow';
+    var rowStateCssClass = 'state-row';
 
     $('.' + rowStateCssClass).removeClass(activeCssClass);
     $('#' + stateMapping[app.state]).addClass(activeCssClass);
   };
 
   /* Handle UI controls */
-  $('#joinButton').click(function () {
+  $('#join-button').click(function () {
     if (app.state !== app.PlayerStates.EMPTY) {
       return;
     }
@@ -50,28 +50,28 @@ $(function () {
     app.socket.emit(utils.ClientRequests.ON_JOIN, {
       battleId: battleId,
       fleetJson: null,
-      fleetName: $('#fleetNameInput').val()
+      fleetName: $('#fleet-name-input').val()
     });
   });
 
-  $('#fleetNameInput').keypress(function (e) {
+  $('#fleet-name-input').keypress(function (e) {
     var code = e.which;
     if (code === 13) {
-      $('#joinButton').click();
+      $('#join-button').click();
       e.preventDefault();
     }
   });
 
   /* Handle server reponses */
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
-    $('#battleId').text(data.battleId);
-    $('#battleId').attr('href', data.battleId);
+    $('#battle-id').text(data.battleId);
+    $('#battle-id').attr('href', data.battleId);
 
     app.setState(app.PlayerStates.WAIT);
   });
 
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
-    $('#serverMessage').text(data.msg);
+    $('#server-message').text(data.msg);
   });
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {

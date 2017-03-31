@@ -23,25 +23,25 @@
 
       <div class="row">
         <div class="col-md-2">
-          <p id="serverMessage">Welcome to Battleship!</p>
-          <p>Battle ID is <a id="battleId" href="#"></a></p>
+          <p id="server-message">Welcome to Battleship!</p>
+          <p>Battle ID is <a id="battle-id" href="#"></a></p>
           <br>
         </div>
         <div class="col-md-8">
           <form class="form-horizontal">
             <div class="form-group">
-              <label class="col-sm-2 control-label" for="fleetNameInput">Fleet</label>
+              <label class="col-sm-2 control-label" for="fleet-name-input">Fleet</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="fleetNameInput" placeholder="Sir Francis Drake">
+                <input type="text" class="form-control" id="fleet-name-input" placeholder="Sir Francis Drake">
                 <span class="help-block">Between 3 and 16 characters</span>
               </div>
             </div>
             <div class="form-group">
-              <div id="mainBoard" class="custom-board">
+              <div id="main-board" class="custom-board">
                 {{#rows}}
                 <div class="custom-row">
                   {{#cells}}
-                  <div id="mainCell{{id}}" class="bg-info custom-cell">
+                  <div id="main-cell-{{id}}" class="bg-info custom-cell">
                   </div>
                   {{/cells}}
                 </div>
@@ -50,7 +50,7 @@
             </div>
             <div class="form-group">
               <div class="col-sm-offset-2 col-sm-10">
-                <button id="joinButton" type="button" class="btn btn-default">Start!</button>
+                <button id="join-button" type="button" class="btn btn-default">Start!</button>
               </div>
             </div>
           </form>
@@ -58,10 +58,10 @@
         </div>
         <div class="col-md-2">
           <table class="table">
-            <tr id="joiningRow" class="stateRow active"><td>Joining</td></tr>
-            <tr id="attackingRow" class="stateRow"><td>Attacking</td></tr>
-            <tr id="defendingRow" class="stateRow"><td>Defending</td></tr>
-            <tr id="celebratingRow" class="stateRow"><td>Celebrating</td></tr>
+            <tr id="joining-row" class="state-row active"><td>Joining</td></tr>
+            <tr id="attacking-row" class="state-row"><td>Attacking</td></tr>
+            <tr id="defending-row" class="state-row"><td>Defending</td></tr>
+            <tr id="celebrating-row" class="state-row"><td>Celebrating</td></tr>
           </table>
         </div>
       </div>
