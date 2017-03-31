@@ -42,7 +42,21 @@ app.use('/css', express.static(path.join(__dirname, 'node_modules', 'bootstrap',
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
 
 const handleIndex = function (req, res) {
-  templateData = {
+  var rows = []
+  for (var j = 0; j < 10; j++) {
+    var cells = []
+    for (var i = 0; i < 10; i++) {
+      cells.push({
+        id: j * 10 + i
+      })
+    }
+    rows.push({
+      cells: cells
+    })
+  }
+
+  var templateData = {
+    rows: rows
   }
   res.end(mustache.to_html(template, templateData))
 }
@@ -120,8 +134,9 @@ io.on('connection', function (client) {
     }
 
     /* either create new battle or join existing battle */
+    var battle
     if (!data.battleId) {
-      var battle = {
+      battle = {
         battleId: generateId(),
         battleState: BattleStates.WAIT,
         connections: [connection]
@@ -129,7 +144,7 @@ io.on('connection', function (client) {
       battles.push(battle)
       sendAcceptResponse(battle)
     } else {
-      var battle = battles.find(function (battle) {
+      battle = battles.find(function (battle) {
         return battle.battleId === data.battleId
       })
 

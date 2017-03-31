@@ -38,6 +38,14 @@
             </div>
             <div class="form-group">
               <div id="mainBoard" class="custom-board">
+                {{#rows}}
+                <div class="custom-row">
+                  {{#cells}}
+                  <div id="mainCell{{id}}" class="bg-info custom-cell">
+                  </div>
+                  {{/cells}}
+                </div>
+                {{/rows}}
               </div>
             </div>
             <div class="form-group">
