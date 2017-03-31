@@ -82,15 +82,15 @@ $(function () {
   });
 
   /* Handle server reponses */
-  app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
-    $('#serverMessage').text(data.msg);
-  });
-
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
     $('#battleId').text(data.battleId);
     $('#battleId').attr('href', data.battleId);
 
     app.setState(app.PlayerStates.WAIT);
+  });
+
+  app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
+    $('#serverMessage').text(data.msg);
   });
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {

@@ -8,7 +8,7 @@
     ON_ACCEPT: 'on_accept',
     ON_REJECT: 'on_reject',
     ON_ATTACK: 'on_attack',
-    ON_DEFEND: 'on_reject',
+    ON_DEFEND: 'on_defend',
     ON_FINISH: 'on_finish'
   };
 })(typeof exports === 'undefined' ? window.utils = {} : exports);
