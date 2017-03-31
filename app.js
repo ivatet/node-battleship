@@ -31,8 +31,6 @@ const logger = new (winston.Logger)({
 
 logger.level = 'debug'
 
-console.log(path.join(__dirname, 'public', 'js'))
-
 app.use('/js', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'js')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/js', express.static(path.join(__dirname, 'public', 'js')))
@@ -40,6 +38,8 @@ app.use('/js', express.static(path.join(__dirname, 'shared', 'js')))
 
 app.use('/css', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css')))
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
+
+app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
 const handleIndex = function (req, res) {
   var rows = []
