@@ -43,12 +43,34 @@ app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.i
 
 const createFleet = function () {
   var fleet = []
+  var lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
 
-  fleet.push({
-    x: 3,
-    y: 2,
-    length: 4,
-    direction: utils.Directions.HOR
+  lengths.forEach(function (length) {
+    var positions = []
+    for (var i = 0; i < 100; i++) {
+      positions.push(i)
+    }
+
+    var ship = null
+
+    while (!ship) {
+      var idx = Math.floor(Math.random() * positions.length)
+      var position = positions[idx]
+      positions.splice(idx, 1)
+
+      var direction = Math.random() > 0.5 ? utils.Directions.VER : utils.Directions.HOR
+      var y = Math.floor(position / 10)
+      var x = position - y
+
+      ship = {
+        x: x,
+        y: y,
+        length: length,
+        direction: direction
+      }
+    }
+
+    fleet.push(ship)
   })
 
   return fleet
