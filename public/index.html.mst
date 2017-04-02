@@ -48,10 +48,9 @@
                 {{/rows}}
               </div>
             </div>
-            <div class="form-group">
-              <div class="col-sm-offset-2 col-sm-10">
-                <button id="join-button" type="button" class="btn btn-default">Start!</button>
-              </div>
+            <div class="form-group text-center">
+              <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
+              <button id="shuffle-button" type="button" class="btn btn-lg btn-default">Shuffle</button>
             </div>
           </form>
           <br>
