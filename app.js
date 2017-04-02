@@ -41,26 +41,70 @@ app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
 
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
-const delta = function (direction) {
+const pointFromDirection = function (direction) {
   return {
     x: direction === utils.Directions.HOR ? 1 : 0,
     y: direction === utils.Directions.VER ? 1 : 0
   }
 }
 
-const isCorrectPoint = function (p) {
+const pointSum = function (p, d) {
+  return {
+    x: p.x + d.x,
+    y: p.y + d.y
+  }
+}
+
+const pointScale = function (p, k) {
+  return {
+    x: p.x * k,
+    y: p.y * k
+  }
+}
+
+const isCorrectPointLocation = function (p) {
   return p.x >= 0 && p.x < 10 && p.y >= 0 && p.y < 10
 }
 
-const isCorrectLocation = function (ship) {
-  var d = delta(ship.direction)
+const isCorrectShipLocation = function (ship) {
+  var d = pointFromDirection(ship.direction)
+  var tail = pointScale(d, ship.length)
+  return isCorrectPointLocation(ship) && isCorrectPointLocation(tail)
+}
 
-  var tail = {
-    x: ship.x + d.x * ship.length,
-    y: ship.y + d.y * ship.length
+const isPointColliding = function (p, canvas) {
+  var dArray = [{ x: -1, y: -1 }, { x: 0, y: -1 }, { x: 1, y: -1 },
+                { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 0 },
+                { x: -1, y: 1 }, { x: 0, y: 1 }, { x: 1, y: 1 }
+  ]
+
+  for (var i = 0; i < dArray.length; i++) {
+    var d = dArray[i]
+    var tmpP = pointSum(p, d)
+    if (!isCorrectPointLocation(tmpP)) {
+      continue
+    }
+
+    if (canvas[tmpP.y * 10 + tmpP.x] !== utils.CellTypes.EMPTY) {
+      return true
+    }
   }
 
-  return isCorrectPoint(ship) && isCorrectPoint(tail)
+  return false
+}
+
+const isShipColliding = function (ship, fleet) {
+  var canvas = renderFleet(fleet)
+  var d = pointFromDirection(ship.direction)
+
+  for (var i = 0; i < ship.length; i++) {
+    var p = pointSum(ship, pointScale(d, i))
+    if (isPointColliding(p, canvas)) {
+      return true
+    }
+  }
+
+  return false
 }
 
 const createFleet = function () {
@@ -91,7 +135,11 @@ const createFleet = function () {
         direction: direction
       }
 
-      if (!isCorrectLocation(tmpShip)) {
+      if (!isCorrectShipLocation(tmpShip)) {
+        continue
+      }
+
+      if (isShipColliding(tmpShip, fleet)) {
         continue
       }
 
@@ -108,7 +156,7 @@ const renderFleet = function (fleet) {
   var canvas = Array(100).fill(utils.CellTypes.EMPTY)
 
   fleet.forEach(function (ship) {
-    var d = delta(ship.direction)
+    var d = pointFromDirection(ship.direction)
 
     for (var i = 0; i < ship.length; i++) {
       var x = ship.x + d.x * i
