@@ -41,6 +41,28 @@ app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
 
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
+const delta = function (direction) {
+  return {
+    x: direction === utils.Directions.HOR ? 1 : 0,
+    y: direction === utils.Directions.VER ? 1 : 0
+  }
+}
+
+const isCorrectPoint = function (p) {
+  return p.x >= 0 && p.x < 10 && p.y >= 0 && p.y < 10
+}
+
+const isCorrectLocation = function (ship) {
+  var d = delta(ship.direction)
+
+  var tail = {
+    x: ship.x + d.x * ship.length,
+    y: ship.y + d.y * ship.length
+  }
+
+  return isCorrectPoint(ship) && isCorrectPoint(tail)
+}
+
 const createFleet = function () {
   var fleet = []
   var lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
@@ -60,14 +82,20 @@ const createFleet = function () {
 
       var direction = Math.random() > 0.5 ? utils.Directions.VER : utils.Directions.HOR
       var y = Math.floor(position / 10)
-      var x = position - y
+      var x = position - y * 10
 
-      ship = {
+      var tmpShip = {
         x: x,
         y: y,
         length: length,
         direction: direction
       }
+
+      if (!isCorrectLocation(tmpShip)) {
+        continue
+      }
+
+      ship = tmpShip
     }
 
     fleet.push(ship)
@@ -80,10 +108,7 @@ const renderFleet = function (fleet) {
   var canvas = Array(100).fill(utils.CellTypes.EMPTY)
 
   fleet.forEach(function (ship) {
-    var d = {
-      x: ship.direction === utils.Directions.HOR ? 1 : 0,
-      y: ship.direction === utils.Directions.VER ? 1 : 0
-    }
+    var d = delta(ship.direction)
 
     for (var i = 0; i < ship.length; i++) {
       var x = ship.x + d.x * i
