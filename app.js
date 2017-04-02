@@ -68,7 +68,7 @@ const isCorrectPointLocation = function (p) {
 
 const isCorrectShipLocation = function (ship) {
   var d = pointFromDirection(ship.direction)
-  var tail = pointScale(d, ship.length)
+  var tail = pointSum(ship, pointScale(d, ship.length))
   return isCorrectPointLocation(ship) && isCorrectPointLocation(tail)
 }
 
