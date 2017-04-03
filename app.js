@@ -18,6 +18,9 @@ const idRange = {
   max: 1000000
 }
 
+/* the descending order is retained for the relaxing arrangement */
+const shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
+
 const generateId = () => 'id' + Math.floor(Math.random() * (idRange.max - idRange.min + 1) + idRange.min)
 
 const logger = new (winston.Logger)({
@@ -109,9 +112,8 @@ const isShipColliding = function (ship, fleet) {
 
 const createFleet = function () {
   var fleet = []
-  var lengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
 
-  lengths.forEach(function (length) {
+  shipLengths.forEach(function (length) {
     var positions = []
     for (var i = 0; i < 100; i++) {
       positions.push(i)
@@ -253,11 +255,45 @@ io.on('connection', function (client) {
     return [true, null]
   }
 
+  var validateFleetJson = function (fleetJson) {
+    var msg = "Internal error! Please reload the page"
+    if (!Array.isArray(fleetJson)) {
+      return [false,  msg]
+    }
+
+    /* get lengths in the descending order as in the reference array */
+    var fleetShipLengths = fleetJson.map(function (ship) {
+      return ship.length
+    }).sort(function (left, right) {
+      if (left < right) {
+        return 1
+      } else if (left > right) {
+        return -1
+      } else {
+        return 0
+      }
+    })
+
+    for (var i = 0; i < shipLengths.length; i++) {
+      if (fleetShipLengths[i] !== shipLengths[i]) {
+        return [false, msg]
+      }
+    }
+
+    return [true, null]
+  }
+
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
     /* validate user input */
     var tuple = validateFleetName(data.fleetName)
+    if (!tuple[0]) {
+      sendRejectResponse(tuple[1])
+      return
+    }
+
+    tuple = validateFleetJson(data.fleetJson)
     if (!tuple[0]) {
       sendRejectResponse(tuple[1])
       return

@@ -49,7 +49,7 @@ $(function () {
 
     app.socket.emit(utils.ClientRequests.ON_JOIN, {
       battleId: battleId,
-      fleetJson: null,
+      fleetJson: window.tmp.fleet,
       fleetName: $('#fleet-name-input').val()
     })
   })
