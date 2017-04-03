@@ -168,7 +168,7 @@ const renderFleet = function (fleet) {
   return canvas
 }
 
-const renderTemplateData = function (canvas) {
+const renderCanvas = function (canvas) {
   var rows = []
   for (var j = 0; j < 10; j++) {
     var cells = []
@@ -184,15 +184,16 @@ const renderTemplateData = function (canvas) {
     })
   }
 
-  return {
-    rows: rows
-  }
+  return rows
 }
 
 const handleIndex = function (req, res) {
   var fleet = createFleet()
   var canvas = renderFleet(fleet)
-  var templateData = renderTemplateData(canvas)
+  var templateData = {
+    fleet: JSON.stringify(fleet),
+    rows: renderCanvas(canvas)
+  }
   res.end(mustache.to_html(template, templateData))
 }
 

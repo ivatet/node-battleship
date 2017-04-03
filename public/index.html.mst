@@ -11,6 +11,10 @@
     <script src="/js/bootstrap.min.js"></script>
     <script src="/js/utils.js"></script>
     <script src="/js/app.js"></script>
+    <script type="text/javascript">
+      window.tmp = {}
+      window.tmp.fleet = {{{fleet}}}
+    </script>
     <title>Battleship (game)</title>
   </head>
   <body>
