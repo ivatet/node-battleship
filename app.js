@@ -265,13 +265,7 @@ io.on('connection', function (client) {
     var fleetShipLengths = fleetJson.map(function (ship) {
       return ship.length
     }).sort(function (left, right) {
-      if (left < right) {
-        return 1
-      } else if (left > right) {
-        return -1
-      } else {
-        return 0
-      }
+      return right - left
     })
 
     for (var i = 0; i < shipLengths.length; i++) {
