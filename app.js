@@ -256,22 +256,35 @@ io.on('connection', function (client) {
   }
 
   var validateFleetJson = function (fleetJson) {
+    var validateFleetJsonSchema = function () {
+      return Array.isArray(fleetJson)
+    }
+
+    var validateFleetJsonLengths = function () {
+      var fleetShipLengths = fleetJson.map(function (ship) {
+        return ship.length
+      })
+
+      var orderedFleetShipLengths = fleetShipLengths.sort(function (left, right) {
+        return right - left
+      })
+
+      for (var i = 0; i < shipLengths.length; i++) {
+        if (orderedFleetShipLengths[i] !== shipLengths[i]) {
+          return false
+        }
+      }
+
+      return true
+    }
+
     var msg = "Internal error! Please reload the page"
-    if (!Array.isArray(fleetJson)) {
+    if (!validateFleetJsonSchema()) {
       return [false,  msg]
     }
 
-    /* get lengths in the descending order as in the reference array */
-    var fleetShipLengths = fleetJson.map(function (ship) {
-      return ship.length
-    }).sort(function (left, right) {
-      return right - left
-    })
-
-    for (var i = 0; i < shipLengths.length; i++) {
-      if (fleetShipLengths[i] !== shipLengths[i]) {
-        return [false, msg]
-      }
+    if (!validateFleetJsonLengths()) {
+      return [false, msg]
     }
 
     return [true, null]
