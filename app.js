@@ -278,12 +278,36 @@ io.on('connection', function (client) {
       return true
     }
 
-    var msg = "Internal error! Please reload the page"
+    var validateFleet = function () {
+      var tmpFleet = []
+
+      for (var i = 0; i < fleetJson.length; i++) {
+        var tmpShip = fleetJson[i]
+
+        if (!isCorrectShipLocation(tmpShip)) {
+          return false
+        }
+
+        if (isShipColliding(tmpShip, tmpFleet)) {
+          return false
+        }
+
+        tmpFleet.push(tmpShip)
+      }
+
+      return true
+    }
+
+    var msg = 'Internal error! Please reload the page'
     if (!validateFleetJsonSchema()) {
-      return [false,  msg]
+      return [false, msg]
     }
 
     if (!validateFleetJsonLengths()) {
+      return [false, msg]
+    }
+
+    if (!validateFleet()) {
       return [false, msg]
     }
 
