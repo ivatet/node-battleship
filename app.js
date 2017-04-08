@@ -42,6 +42,8 @@ app.use('/js', express.static(path.join(__dirname, 'shared', 'js')))
 app.use('/css', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'css')))
 app.use('/css', express.static(path.join(__dirname, 'public', 'css')))
 
+app.use('/fonts/', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'fonts')))
+
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
 const pointFromDirection = function (direction) {
@@ -238,39 +240,22 @@ io.on('connection', function (client) {
     }
   }
 
-  var validateFleetName = function (fleetName) {
-    if (typeof fleetName !== 'string') {
-      return [false, "Don't forget to specify your fleet name!"]
+  var validateFleet = function (fleet) {
+    var validateSchema = function () {
+      return Array.isArray(fleet)
     }
 
-    var lengthRange = {
-      min: 3,
-      max: 16
-    }
-
-    if (!validator.isLength(fleetName, lengthRange)) {
-      return [false, 'Between 3 and 16 characters!']
-    }
-
-    return [true, null]
-  }
-
-  var validateFleetJson = function (fleetJson) {
-    var validateFleetJsonSchema = function () {
-      return Array.isArray(fleetJson)
-    }
-
-    var validateFleetJsonLengths = function () {
-      var fleetShipLengths = fleetJson.map(function (ship) {
+    var validateLengths = function () {
+      var lengths = fleet.map(function (ship) {
         return ship.length
       })
 
-      var orderedFleetShipLengths = fleetShipLengths.sort(function (left, right) {
+      var orderedLengths = lengths.sort(function (left, right) {
         return right - left
       })
 
       for (var i = 0; i < shipLengths.length; i++) {
-        if (orderedFleetShipLengths[i] !== shipLengths[i]) {
+        if (orderedLengths[i] !== shipLengths[i]) {
           return false
         }
       }
@@ -278,11 +263,11 @@ io.on('connection', function (client) {
       return true
     }
 
-    var validateFleet = function () {
+    var validateArrangement = function () {
       var tmpFleet = []
 
-      for (var i = 0; i < fleetJson.length; i++) {
-        var tmpShip = fleetJson[i]
+      for (var i = 0; i < fleet.length; i++) {
+        var tmpShip = fleet[i]
 
         if (!isCorrectShipLocation(tmpShip)) {
           return false
@@ -299,15 +284,15 @@ io.on('connection', function (client) {
     }
 
     var msg = 'Internal error! Please reload the page'
-    if (!validateFleetJsonSchema()) {
+    if (!validateSchema()) {
       return [false, msg]
     }
 
-    if (!validateFleetJsonLengths()) {
+    if (!validateLengths()) {
       return [false, msg]
     }
 
-    if (!validateFleet()) {
+    if (!validateArrangement()) {
       return [false, msg]
     }
 
@@ -317,14 +302,7 @@ io.on('connection', function (client) {
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
-    /* validate user input */
-    var tuple = validateFleetName(data.fleetName)
-    if (!tuple[0]) {
-      sendRejectResponse(tuple[1])
-      return
-    }
-
-    tuple = validateFleetJson(data.fleetJson)
+    var tuple = validateFleet(data.fleet)
     if (!tuple[0]) {
       sendRejectResponse(tuple[1])
       return
@@ -332,8 +310,7 @@ io.on('connection', function (client) {
 
     var connection = {
       connection: client,
-      fleetName: validator.escape(data.fleetName),
-      fleetJson: data.fleetJson
+      fleet: data.fleet
     }
 
     /* either create new battle or join existing battle */

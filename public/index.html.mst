@@ -19,55 +19,45 @@
   </head>
   <body>
     <div class="container">
-
       <div class="page-header">
         <h1>Battleship</h1>
         <p class="lead">A guessing game for two players</p>
       </div>
-
-      <div class="row">
-        <div class="col-md-2">
-          <p id="server-message">Welcome to Battleship!</p>
-          <p>Battle ID is <a id="battle-id" href="#"></a></p>
-          <br>
-        </div>
-        <div class="col-md-8">
-          <form class="form-horizontal">
-            <div class="form-group">
-              <label class="col-sm-2 control-label" for="fleet-name-input">Fleet</label>
-              <div class="col-sm-10">
-                <input type="text" class="form-control" id="fleet-name-input" placeholder="Sir Francis Drake">
-                <span class="help-block">Between 3 and 16 characters</span>
-              </div>
-            </div>
-            <div class="form-group">
-              <div id="main-board" class="custom-board">
-                {{#rows}}
-                <div class="custom-row">
-                  {{#cells}}
-                  <div id="main-cell-{{idx}}" class="{{style}} custom-cell">
-                  </div>
-                  {{/cells}}
-                </div>
-                {{/rows}}
-              </div>
-            </div>
-            <div class="form-group text-center">
-              <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
-              <button id="shuffle-button" type="button" class="btn btn-lg btn-default">Shuffle</button>
-            </div>
-          </form>
-          <br>
-        </div>
-        <div class="col-md-2">
-          <table class="table">
-            <tr id="joining-row" class="state-row active"><td>Joining</td></tr>
-            <tr id="attacking-row" class="state-row"><td>Attacking</td></tr>
-            <tr id="defending-row" class="state-row"><td>Defending</td></tr>
-            <tr id="celebrating-row" class="state-row"><td>Celebrating</td></tr>
-          </table>
-        </div>
+      <div class="alert bg-success text-center">
+        <form class="form">
+          Click <button id="shuffle-button" type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-refresh"></span></button> to shuffle your fleet and then click <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
+        </form>
       </div>
-    </div>
+      <div class="row">
+        <div class="col-xs-5 col-xs-offset-1">
+          <div id="local-board" class="custom-board pull-right">
+            {{#rows}}
+            {{#cells}}
+              <div id="local-cell-{{idx}}" class="{{style}} custom-cell">
+              </div>
+            {{/cells}}
+            {{/rows}}
+          </div>
+        </div>
+        <div class="col-xs-5">
+          <div id="remote-board" class="custom-board pull-left">
+            {{#rows}}
+            {{#cells}}
+              <div id="remote-cell-{{idx}}" class="bg-info custom-cell">
+              </div>
+            {{/cells}}
+            {{/rows}}
+          </div>
+        </div>
+      </div> <!-- row -->
+      <div class="row">
+        <div class="col-xs-5 col-xs-offset-1 text-center">
+          You
+        </div>
+        <div class="col-xs-5 text-center">
+          Remote player
+        </div>
+      </div> <!-- row -->
+    </div> <!-- container -->
   </body>
 </html>

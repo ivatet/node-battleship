@@ -1,29 +1,25 @@
 .custom-board {
-  width: 400px;
-  height: 400px;
-  border-radius: 5px;
+  width: 100%;
   padding: 3px;
   margin: 0 auto;
 }
 
-.custom-row {
-  margin-bottom: 2px;
+@media (max-width: 767px) {
+  .custom-cell {
+    width: 9%;
+    padding-bottom:9%;
+    margin: 0.3%;
+    float: left;
+    border-radius: 2px;
+  }
 }
 
-.custom-row:last-child {
-  margin-bottom: 0;
-}
-
-.custom-row:after {
-  content: "";
-  display: block;
-  clear: both;
-}
-
-.custom-cell {
-  float: left;
-  width: 37px;
-  height: 37px;
-  border-radius: 3px;
-  margin-right: 2px;
+@media (min-width: 768px) {
+  .custom-cell {
+    width: 9%;
+    padding-bottom:9%;
+    margin: 1px;
+    float: left;
+    border-radius: 2px;
+  }
 }

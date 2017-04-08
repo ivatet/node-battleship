@@ -20,19 +20,6 @@ $(function () {
 
   app.setState = function (newState) {
     app.state = newState
-
-    var stateMapping = {}
-    stateMapping[app.PlayerStates.EMPTY] = 'joining-row'
-    stateMapping[app.PlayerStates.WAIT] = 'joining-row'
-    stateMapping[app.PlayerStates.ATTACK] = 'attacking-row'
-    stateMapping[app.PlayerStates.DEFEND] = 'defending-row'
-    stateMapping[app.PlayerStates.FINISH] = 'celebrating-row'
-
-    var activeCssClass = 'active'
-    var rowStateCssClass = 'state-row'
-
-    $('.' + rowStateCssClass).removeClass(activeCssClass)
-    $('#' + stateMapping[app.state]).addClass(activeCssClass)
   }
 
   /* Handle UI controls */
@@ -49,8 +36,7 @@ $(function () {
 
     app.socket.emit(utils.ClientRequests.ON_JOIN, {
       battleId: battleId,
-      fleetJson: window.tmp.fleet,
-      fleetName: $('#fleet-name-input').val()
+      fleet: window.tmp.fleet,
     })
   })
 
@@ -64,14 +50,14 @@ $(function () {
 
   /* Handle server reponses */
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
-    $('#battle-id').text(data.battleId)
-    $('#battle-id').attr('href', data.battleId)
+    /* $('#battle-id').text(data.battleId) */
+    /* $('#battle-id').attr('href', data.battleId) */
 
     app.setState(app.PlayerStates.WAIT)
   })
 
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
-    $('#server-message').text(data.msg)
+    /* $('#server-message').text(data.msg) */
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
