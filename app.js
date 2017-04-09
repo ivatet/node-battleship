@@ -156,8 +156,10 @@ const createFleet = function () {
   return fleet
 }
 
+const emptyFleet = () => Array(100).fill(utils.CellTypes.EMPTY)
+
 const renderFleet = function (fleet) {
-  var canvas = Array(100).fill(utils.CellTypes.EMPTY)
+  var canvas = emptyFleet()
 
   fleet.forEach(function (ship) {
     var d = pointFromDirection(ship.direction)
@@ -172,31 +174,28 @@ const renderFleet = function (fleet) {
   return canvas
 }
 
-const renderCanvas = function (canvas) {
-  var rows = []
-  for (var j = 0; j < 10; j++) {
-    var cells = []
-    for (var i = 0; i < 10; i++) {
-      var idx = j * 10 + i
-      cells.push({
-        idx: idx,
-        style: utils.cellStyle(canvas[idx])
-      })
-    }
-    rows.push({
-      cells: cells
-    })
-  }
-
-  return rows
-}
-
 const handleIndex = function (req, res) {
   var fleet = createFleet()
   var canvas = renderFleet(fleet)
+  var localCells = canvas.map(function (p, i) {
+    return {
+      htmlId: utils.localCellId(i),
+      htmlClass: utils.cellStyle(canvas[i])
+    }
+  })
+  var remoteCells = emptyFleet().map(function (p, i) {
+    return {
+      htmlId: utils.remoteCellId(i),
+      htmlClass: utils.cellStyle(utils.CellTypes.EMPTY)
+    }
+  })
+
   var templateData = {
     fleet: JSON.stringify(fleet),
-    rows: renderCanvas(canvas)
+    localBoardId: utils.LocalBoardId,
+    localCells: localCells,
+    remoteBoardId: utils.RemoteBoardId,
+    remoteCells: remoteCells
   }
   res.end(mustache.to_html(template, templateData))
 }

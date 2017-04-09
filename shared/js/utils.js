@@ -29,4 +29,13 @@
     HOR: 'hor',
     VER: 'ver'
   }
+
+  exports.LocalBoardId = 'local-board'
+  exports.RemoteBoardId = 'remote-board'
+  exports.localCellId = function (cellId) {
+    return 'local-cell-' + cellId
+  }
+  exports.remoteCellId = function (cellId) {
+    return 'remote-cell-' + cellId
+  }
 })(typeof exports === 'undefined' ? window.utils = {} : exports)

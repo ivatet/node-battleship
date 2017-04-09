@@ -30,23 +30,17 @@
       </div>
       <div class="row">
         <div class="col-xs-5 col-xs-offset-1">
-          <div id="local-board" class="custom-board pull-right">
-            {{#rows}}
-            {{#cells}}
-              <div id="local-cell-{{idx}}" class="{{style}} custom-cell">
-              </div>
-            {{/cells}}
-            {{/rows}}
+          <div id="{{localBoardId}}" class="custom-board pull-right">
+            {{#localCells}}
+              <div id="{{htmlId}}" class="{{htmlClass}} custom-cell"></div>
+            {{/localCells}}
           </div>
         </div>
         <div class="col-xs-5">
-          <div id="remote-board" class="custom-board pull-left">
-            {{#rows}}
-            {{#cells}}
-              <div id="remote-cell-{{idx}}" class="bg-info custom-cell">
-              </div>
-            {{/cells}}
-            {{/rows}}
+          <div id="{{remoteBoardId}}" class="custom-board pull-left">
+            {{#remoteCells}}
+              <div id="{{htmlId}}" class="{{htmlClass}} custom-cell"></div>
+            {{/remoteCells}}
           </div>
         </div>
       </div> <!-- row -->
