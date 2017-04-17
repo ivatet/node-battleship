@@ -18,9 +18,6 @@ const idRange = {
   max: 1000000
 }
 
-/* the descending order is retained for the relaxing arrangement */
-const shipLengths = [4, 3, 3, 2, 2, 2, 1, 1, 1, 1]
-
 const generateId = () => 'id' + Math.floor(Math.random() * (idRange.max - idRange.min + 1) + idRange.min)
 
 const logger = new (winston.Logger)({
@@ -46,144 +43,16 @@ app.use('/fonts/', express.static(path.join(__dirname, 'node_modules', 'bootstra
 
 app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.ico')))
 
-const pointFromDirection = function (direction) {
-  return {
-    x: direction === utils.Directions.HOR ? 1 : 0,
-    y: direction === utils.Directions.VER ? 1 : 0
-  }
-}
-
-const pointSum = function (p, d) {
-  return {
-    x: p.x + d.x,
-    y: p.y + d.y
-  }
-}
-
-const pointScale = function (p, k) {
-  return {
-    x: p.x * k,
-    y: p.y * k
-  }
-}
-
-const isCorrectPointLocation = function (p) {
-  return p.x >= 0 && p.x < 10 && p.y >= 0 && p.y < 10
-}
-
-const isCorrectShipLocation = function (ship) {
-  var d = pointFromDirection(ship.direction)
-  var tail = pointSum(ship, pointScale(d, ship.length))
-  return isCorrectPointLocation(ship) && isCorrectPointLocation(tail)
-}
-
-const isPointColliding = function (p, canvas) {
-  var dArray = [{ x: -1, y: -1 }, { x: 0, y: -1 }, { x: 1, y: -1 },
-                { x: -1, y: 0 }, { x: 0, y: 0 }, { x: 1, y: 0 },
-                { x: -1, y: 1 }, { x: 0, y: 1 }, { x: 1, y: 1 }
-  ]
-
-  for (var i = 0; i < dArray.length; i++) {
-    var d = dArray[i]
-    var tmpP = pointSum(p, d)
-    if (!isCorrectPointLocation(tmpP)) {
-      continue
-    }
-
-    if (canvas[tmpP.y * 10 + tmpP.x] !== utils.CellTypes.EMPTY) {
-      return true
-    }
-  }
-
-  return false
-}
-
-const isShipColliding = function (ship, fleet) {
-  var canvas = renderFleet(fleet)
-  var d = pointFromDirection(ship.direction)
-
-  for (var i = 0; i < ship.length; i++) {
-    var p = pointSum(ship, pointScale(d, i))
-    if (isPointColliding(p, canvas)) {
-      return true
-    }
-  }
-
-  return false
-}
-
-const createFleet = function () {
-  var fleet = []
-
-  shipLengths.forEach(function (length) {
-    var positions = []
-    for (var i = 0; i < 100; i++) {
-      positions.push(i)
-    }
-
-    var ship = null
-
-    while (!ship) {
-      var idx = Math.floor(Math.random() * positions.length)
-      var position = positions[idx]
-      positions.splice(idx, 1)
-
-      var direction = Math.random() > 0.5 ? utils.Directions.VER : utils.Directions.HOR
-      var y = Math.floor(position / 10)
-      var x = position - y * 10
-
-      var tmpShip = {
-        x: x,
-        y: y,
-        length: length,
-        direction: direction
-      }
-
-      if (!isCorrectShipLocation(tmpShip)) {
-        continue
-      }
-
-      if (isShipColliding(tmpShip, fleet)) {
-        continue
-      }
-
-      ship = tmpShip
-    }
-
-    fleet.push(ship)
-  })
-
-  return fleet
-}
-
-const emptyFleet = () => Array(100).fill(utils.CellTypes.EMPTY)
-
-const renderFleet = function (fleet) {
-  var canvas = emptyFleet()
-
-  fleet.forEach(function (ship) {
-    var d = pointFromDirection(ship.direction)
-
-    for (var i = 0; i < ship.length; i++) {
-      var x = ship.x + d.x * i
-      var y = ship.y + d.y * i
-      canvas[y * 10 + x] = utils.CellTypes.SHIP
-    }
-  })
-
-  return canvas
-}
-
 const handleIndex = function (req, res) {
-  var fleet = createFleet()
-  var canvas = renderFleet(fleet)
+  var fleet = utils.createFleet()
+  var canvas = utils.renderFleet(fleet)
   var localCells = canvas.map(function (p, i) {
     return {
       htmlId: utils.localCellId(i),
       htmlClass: utils.cellStyle(canvas[i])
     }
   })
-  var remoteCells = emptyFleet().map(function (p, i) {
+  var remoteCells = utils.emptyFleet().map(function (p, i) {
     return {
       htmlId: utils.remoteCellId(i),
       htmlClass: utils.cellStyle(utils.CellTypes.EMPTY)
@@ -210,6 +79,64 @@ const BattleStates = {
 }
 
 const battles = []
+
+const validateFleet = function (fleet) {
+  var validateSchema = function () {
+    return Array.isArray(fleet)
+  }
+
+  var validateLengths = function () {
+    var lengths = fleet.map(function (ship) {
+      return ship.length
+    })
+
+    var orderedLengths = lengths.sort(function (left, right) {
+      return right - left
+    })
+
+    for (var i = 0; i < shipLengths.length; i++) {
+      if (orderedLengths[i] !== shipLengths[i]) {
+        return false
+      }
+    }
+
+    return true
+  }
+
+  var validateArrangement = function () {
+    var tmpFleet = []
+
+    for (var i = 0; i < fleet.length; i++) {
+      var tmpShip = fleet[i]
+
+      if (!utils.isCorrectShipLocation(tmpShip)) {
+        return false
+      }
+
+      if (utils.isShipColliding(tmpShip, tmpFleet)) {
+        return false
+      }
+
+      tmpFleet.push(tmpShip)
+    }
+
+    return true
+  }
+
+  if (!utils.validateSchema()) {
+    return false
+  }
+
+  if (!utils.validateLengths()) {
+    return false
+  }
+
+  if (!utils.validateArrangement()) {
+    return false
+  }
+
+  return true
+}
 
 io.on('connection', function (client) {
   logger.debug('new client connected')
@@ -239,71 +166,11 @@ io.on('connection', function (client) {
     }
   }
 
-  var validateFleet = function (fleet) {
-    var validateSchema = function () {
-      return Array.isArray(fleet)
-    }
-
-    var validateLengths = function () {
-      var lengths = fleet.map(function (ship) {
-        return ship.length
-      })
-
-      var orderedLengths = lengths.sort(function (left, right) {
-        return right - left
-      })
-
-      for (var i = 0; i < shipLengths.length; i++) {
-        if (orderedLengths[i] !== shipLengths[i]) {
-          return false
-        }
-      }
-
-      return true
-    }
-
-    var validateArrangement = function () {
-      var tmpFleet = []
-
-      for (var i = 0; i < fleet.length; i++) {
-        var tmpShip = fleet[i]
-
-        if (!isCorrectShipLocation(tmpShip)) {
-          return false
-        }
-
-        if (isShipColliding(tmpShip, tmpFleet)) {
-          return false
-        }
-
-        tmpFleet.push(tmpShip)
-      }
-
-      return true
-    }
-
-    var msg = 'Internal error! Please reload the page'
-    if (!validateSchema()) {
-      return [false, msg]
-    }
-
-    if (!validateLengths()) {
-      return [false, msg]
-    }
-
-    if (!validateArrangement()) {
-      return [false, msg]
-    }
-
-    return [true, null]
-  }
-
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
-    var tuple = validateFleet(data.fleet)
-    if (!tuple[0]) {
-      sendRejectResponse(tuple[1])
+    if (!validateFleet(data.fleet)) {
+      sendRejectResponse('Please reload the page!')
       return
     }
 

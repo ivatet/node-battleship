@@ -40,6 +40,17 @@ $(function () {
     })
   })
 
+  $('#shuffle-button').click(function () {
+    window.tmp.fleet = utils.createFleet()
+    var canvas = utils.renderFleet(window.tmp.fleet)
+    canvas.forEach(function (p, i) {
+      var cell = $('#' + utils.localCellId(i))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
+      cell.addClass(utils.cellStyle(p))
+    })
+  })
+
   $('#fleet-name-input').keypress(function (e) {
     var code = e.which
     if (code === 13) {
