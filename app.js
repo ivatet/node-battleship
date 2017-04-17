@@ -94,8 +94,8 @@ const validateFleet = function (fleet) {
       return right - left
     })
 
-    for (var i = 0; i < shipLengths.length; i++) {
-      if (orderedLengths[i] !== shipLengths[i]) {
+    for (var i = 0; i < utils.shipLengths.length; i++) {
+      if (orderedLengths[i] !== utils.shipLengths[i]) {
         return false
       }
     }
@@ -123,15 +123,15 @@ const validateFleet = function (fleet) {
     return true
   }
 
-  if (!utils.validateSchema()) {
+  if (!validateSchema()) {
     return false
   }
 
-  if (!utils.validateLengths()) {
+  if (!validateLengths()) {
     return false
   }
 
-  if (!utils.validateArrangement()) {
+  if (!validateArrangement()) {
     return false
   }
 
