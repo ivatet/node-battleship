@@ -61,8 +61,9 @@ $(function () {
 
   /* Handle server reponses */
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
-    /* $('#battle-id').text(data.battleId) */
-    /* $('#battle-id').attr('href', data.battleId) */
+    $('#shuffle-alert').addClass('hidden')
+    $('#link-alert').removeClass('hidden')
+    $('#battle-input').val(data.battleId)
 
     app.setState(app.PlayerStates.WAIT)
   })

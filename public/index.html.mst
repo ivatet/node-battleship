@@ -19,15 +19,23 @@
   </head>
   <body>
     <div class="container">
+      <!-- Header -->
       <div class="page-header">
         <h1>Battleship</h1>
         <p class="lead">A guessing game for two players</p>
       </div>
-      <div class="alert bg-success text-center">
+      <!-- Alerts -->
+      <div id="shuffle-alert" class="alert bg-success text-center lead">
         <form class="form">
           Click <button id="shuffle-button" type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-refresh"></span></button> to shuffle your fleet and then click <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
         </form>
       </div>
+      <div id="link-alert" class="alert bg-success text-center lead hidden">
+        <form class="form-inline">
+          Send the link to your opponent <input id="battle-input" type="text" class="form-control input-lg" readonly>
+        </form>
+      </div>
+      <!-- Fleet -->
       <div class="row">
         <div class="col-xs-5 col-xs-offset-1">
           <div id="{{localBoardId}}" class="custom-board pull-right">
@@ -43,13 +51,14 @@
             {{/remoteCells}}
           </div>
         </div>
-      </div> <!-- row -->
+      </div>
+      <!-- Fleet label -->
       <div class="row">
         <div class="col-xs-5 col-xs-offset-1 text-center">
-          You
+          <p class="lead">You</p>
         </div>
         <div class="col-xs-5 text-center">
-          Remote player
+          <p class="lead">Remote player</p>
         </div>
       </div> <!-- row -->
     </div> <!-- container -->
