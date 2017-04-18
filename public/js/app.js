@@ -22,6 +22,15 @@ $(function () {
     app.state = newState
   }
 
+  app.showAlert = function (alertId) {
+    $('.custom-alert').each(function () {
+      if (!$(this).hasClass('hidden')) {
+        $(this).addClass('hidden')
+      }
+    })
+    $(alertId).removeClass('hidden')
+  }
+
   /* Handle UI controls */
   $('#join-button').click(function () {
     if (app.state !== app.PlayerStates.EMPTY) {
@@ -61,15 +70,14 @@ $(function () {
 
   /* Handle server reponses */
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
-    $('#shuffle-alert').addClass('hidden')
-    $('#link-alert').removeClass('hidden')
     $('#battle-input').val(window.location.href + data.battleId)
-
+    app.showAlert('#link-alert')
     app.setState(app.PlayerStates.WAIT)
   })
 
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
-    /* $('#server-message').text(data.msg) */
+    $('#error-span').text(data.msg)
+    app.showAlert('#error-alert')
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {

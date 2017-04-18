@@ -170,7 +170,7 @@ io.on('connection', function (client) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
     if (!validateFleet(data.fleet)) {
-      sendRejectResponse('Please reload the page!')
+      sendRejectResponse('Oops! Something went wrong.')
       return
     }
 
