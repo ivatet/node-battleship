@@ -63,7 +63,7 @@ $(function () {
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
     $('#shuffle-alert').addClass('hidden')
     $('#link-alert').removeClass('hidden')
-    $('#battle-input').val(data.battleId)
+    $('#battle-input').val(window.location.href + data.battleId)
 
     app.setState(app.PlayerStates.WAIT)
   })

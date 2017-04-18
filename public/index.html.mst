@@ -32,7 +32,7 @@
       </div>
       <div id="link-alert" class="alert bg-success text-center lead hidden">
         <form class="form-inline">
-          Send the link to your opponent <input id="battle-input" type="text" class="form-control input-lg" readonly>
+          Send the link to your opponent <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
         </form>
       </div>
       <!-- Fleet -->
