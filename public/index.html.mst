@@ -39,7 +39,7 @@
         <form class="form-inline">
           <span>Send the link to your opponent</span>
           <div class="input-group">
-            <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
+            <input id="battle-input" type="text" class="form-control input-lg" readonly>
             <span class="input-group-btn">
               <button id="join-button" type="button" class="btn btn-lg btn-primary">
                 <span class="glyphicon glyphicon-copy"></span>
