@@ -32,6 +32,8 @@ $(function () {
   }
 
   /* Handle UI controls */
+  new Clipboard('#copy-button')
+
   $('#join-button').click(function () {
     if (app.state !== app.PlayerStates.EMPTY) {
       return
