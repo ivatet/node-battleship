@@ -27,12 +27,25 @@
       <!-- Alerts -->
       <div id="shuffle-alert" class="alert bg-success text-center lead custom-alert">
         <form class="form">
-          Click <button id="shuffle-button" type="button" class="btn btn-lg btn-default"><span class="glyphicon glyphicon-refresh"></span></button> to shuffle your fleet and then click <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
+          <span>Click</span>
+          <button id="shuffle-button" type="button" class="btn btn-lg btn-default">
+            <span class="glyphicon glyphicon-refresh"></span>
+          </button>
+          <span>to shuffle your fleet and then click</span>
+          <button id="join-button" type="button" class="btn btn-lg btn-primary">Fight!</button>
         </form>
       </div>
       <div id="link-alert" class="alert bg-success text-center lead hidden custom-alert">
         <form class="form-inline">
-          Send the link to your opponent <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
+          <span>Send the link to your opponent</span>
+          <div class="input-group">
+            <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
+            <span class="input-group-btn">
+              <button id="join-button" type="button" class="btn btn-lg btn-primary">
+                <span class="glyphicon glyphicon-copy"></span>
+              </button>
+            </span>
+          </div>
         </form>
       </div>
       <div id="error-alert" class="alert bg-danger text-center lead hidden custom-alert">
