@@ -113,12 +113,12 @@ const battles = {
   }
 }
 
-const validateFleet = function (fleet) {
-  var validateSchema = function () {
+const isCorrectFleet = function (fleet) {
+  var isCorrectSchema = function () {
     return Array.isArray(fleet)
   }
 
-  var validateLengths = function () {
+  var isCorrectLengthSet = function () {
     var lengths = fleet.map(function (ship) {
       return ship.length
     })
@@ -136,7 +136,7 @@ const validateFleet = function (fleet) {
     return true
   }
 
-  var validateArrangement = function () {
+  var isCorrectArrangement = function () {
     var tmpFleet = []
 
     for (var i = 0; i < fleet.length; i++) {
@@ -156,7 +156,7 @@ const validateFleet = function (fleet) {
     return true
   }
 
-  return validateSchema() && validateLengths() && validateArrangement()
+  return isCorrectSchema() && isCorrectLengthSet() && isCorrectArrangement()
 }
 
 io.on('connection', function (client) {
@@ -192,7 +192,7 @@ io.on('connection', function (client) {
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
-    if (!validateFleet(data.fleet)) {
+    if (!isCorrectFleet(data.fleet)) {
       sendRejectResponse('Oops! Something went wrong.')
       return
     }
