@@ -50,7 +50,7 @@
         </form>
       </div>
       <div id="error-alert" class="alert bg-danger text-center lead hidden custom-alert">
-        <span id="error-span">Oops! Something went wrong.</span> <span>Please <a href="/">reload the page</a>.</span>
+        <span id="error-span">Oops! Something went wrong.</span> <span>Just <a href="/">create a new battle</a>.</span>
       </div>
       <!-- Fleet -->
       <div class="row">
