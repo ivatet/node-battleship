@@ -79,7 +79,39 @@ const BattleStates = {
   P2_ATTACK: 3
 }
 
-const battles = []
+const battles = {
+  battles: [],
+
+  createBattle: function (player) {
+    var battle = {
+      battleId: generateId(),
+      battleState: BattleStates.WAIT,
+      players: [player]
+    }
+    this.battles.push(battle)
+    logger.debug('battle added, count=' + this.battles.length)
+    return battle
+  },
+
+  removeBattle: function (battle) {
+    this.battles.splice(this.battles.indexOf(battle), 1)
+    logger.debug('battle removed, count=' + this.battles.length)
+  },
+
+  findByConnection: function (conn) {
+    return this.battles.find(function (b) {
+      return b.players.find(function (p) {
+        return p.conn === conn
+      })
+    })
+  },
+
+  findById: function (battleId) {
+    return this.battles.find(function (b) {
+      return b.battleId === battleId
+    })
+  }
+}
 
 const validateFleet = function (fleet) {
   var validateSchema = function () {
@@ -148,22 +180,24 @@ io.on('connection', function (client) {
     })
   }
 
-  var sendRejectResponse = function (msg) {
-    client.emit(utils.ServerResponses.ON_REJECT, {
+  var sendRejectResponseToClient = function (conn, msg) {
+    conn.emit(utils.ServerResponses.ON_REJECT, {
       msg: msg
     })
   }
+
+  var sendRejectResponse = (msg) => sendRejectResponseToClient(client, msg)
 
   var sendAttackDefendResponses = function (battle) {
     var attackIdx = BattleStates.P1_ATTACK ? 0 : 1
 
     for (var i = 0; i < 2; i++) {
-      var client = battle.connections[i].connection
+      var conn = battle.players[i].conn
       var event = utils.ServerResponses.ON_DEFEND
       if (i === attackIdx) {
         event = utils.ServerResponses.ON_ATTACK
       }
-      client.emit(event, {})
+      conn.emit(event, {})
     }
   }
 
@@ -175,25 +209,16 @@ io.on('connection', function (client) {
       return
     }
 
-    var connection = {
-      connection: client,
+    var player = {
+      conn: client,
       fleet: data.fleet
     }
 
     /* either create new battle or join existing battle */
-    var battle
     if (!data.battleId) {
-      battle = {
-        battleId: generateId(),
-        battleState: BattleStates.WAIT,
-        connections: [connection]
-      }
-      battles.push(battle)
-      sendAcceptResponse(battle)
+      sendAcceptResponse(battles.createBattle(player))
     } else {
-      battle = battles.find(function (battle) {
-        return battle.battleId === data.battleId
-      })
+      var battle = battles.findById(data.battleId)
 
       if (!battle) {
         sendRejectResponse('Battle not found!')
@@ -205,7 +230,7 @@ io.on('connection', function (client) {
         return
       }
 
-      battle.connections.push(connection)
+      battle.players.push(player)
 
       var randomBinary = Math.floor(Math.random() * 2)
       battle.battleState = randomBinary ? BattleStates.P1_ATTACK : BattleStates.P2_ATTACK
@@ -214,8 +239,19 @@ io.on('connection', function (client) {
     }
   })
 
-  client.on('disconnect', function (client) {
+  client.on('disconnect', function () {
     logger.debug('client disconnected')
+
+    var battle = battles.findByConnection(client)
+    if (battle !== undefined) {
+      player = battle.players.find(function (p) {
+        return p.conn !== client
+      })
+      if (player) {
+        sendRejectResponse('Battle not found!', player)
+      }
+      battles.removeBattle(battle)
+    }
   })
 })
 
