@@ -52,6 +52,12 @@
       <div id="error-alert" class="alert bg-danger text-center lead hidden custom-alert">
         <span id="error-span">Oops! Something went wrong.</span> <span>Just <a href="/">create a new battle</a>.</span>
       </div>
+      <div id="attack-alert" class="alert bg-success text-center lead hidden custom-alert">
+        <span>Attack!</span>
+      </div>
+      <div id="defend-alert" class="alert bg-warning text-center lead hidden custom-alert">
+        <span>Defend!</span>
+      </div>
       <!-- Fleet -->
       <div class="row">
         <div class="col-xs-5 col-xs-offset-1">

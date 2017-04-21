@@ -64,8 +64,10 @@ $(function () {
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
+    app.showAlert('#attack-alert')
   })
 
   app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
+    app.showAlert('#defend-alert')
   })
 })
