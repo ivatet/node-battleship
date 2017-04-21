@@ -248,7 +248,7 @@ io.on('connection', function (client) {
         return p.conn !== client
       })
       if (player) {
-        sendRejectResponse('Battle not found!', player)
+        sendRejectResponseToClient(player.conn, 'The remote player has been disconnected!')
       }
       battles.removeBattle(battle)
     }
