@@ -4,23 +4,9 @@ $(function () {
   var app = window.app
   var utils = window.utils
 
-  app.PlayerStates = {
-    EMPTY: 1,
-    WAIT: 2,
-    ATTACK: 3,
-    DEFEND: 4,
-    FINISH: 5
-  }
-
-  app.state = app.PlayerStates.EMPTY
-
   app.socket = io('/', {
     reconnection: false
   })
-
-  app.setState = function (newState) {
-    app.state = newState
-  }
 
   app.showAlert = function (alertId) {
     $('.custom-alert').each(function () {
@@ -35,10 +21,6 @@ $(function () {
   new Clipboard('#copy-button')
 
   $('#join-button').click(function () {
-    if (app.state !== app.PlayerStates.EMPTY) {
-      return
-    }
-
     var battleId = null
 
     if (window.location.pathname.length > 1) {
@@ -74,7 +56,6 @@ $(function () {
   app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
     $('#battle-input').val(window.location.href + data.battleId)
     app.showAlert('#link-alert')
-    app.setState(app.PlayerStates.WAIT)
   })
 
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
@@ -83,10 +64,8 @@ $(function () {
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
-    app.setState(app.PlayerStates.ATTACK)
   })
 
   app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
-    app.setState(app.PlayerStates.DEFEND)
   })
 })
