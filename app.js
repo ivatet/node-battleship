@@ -192,6 +192,7 @@ io.on('connection', function (client) {
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
+    /* TODO Validate a whole data object */
     if (!isCorrectFleet(data.fleet)) {
       sendRejectResponse('Oops! Something went wrong.')
       return
@@ -202,7 +203,7 @@ io.on('connection', function (client) {
       fleet: data.fleet
     }
 
-    /* either create new battle or join existing battle */
+    /* Either create new battle or join existing battle */
     if (!data.battleId) {
       sendAcceptResponse(battles.createBattle(player))
     } else {
