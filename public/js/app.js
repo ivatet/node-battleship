@@ -61,6 +61,7 @@ $(function () {
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
     $('#error-span').text(data.msg)
     app.showAlert('#error-alert')
+    app.socket.disconnect()
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
