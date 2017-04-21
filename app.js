@@ -156,19 +156,7 @@ const validateFleet = function (fleet) {
     return true
   }
 
-  if (!validateSchema()) {
-    return false
-  }
-
-  if (!validateLengths()) {
-    return false
-  }
-
-  if (!validateArrangement()) {
-    return false
-  }
-
-  return true
+  return validateSchema() && validateLengths() && validateArrangement()
 }
 
 io.on('connection', function (client) {
