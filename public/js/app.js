@@ -17,6 +17,37 @@ $(function () {
     $(alertId).removeClass('hidden')
   }
 
+  app.cleanLocalBoard = function () {
+    for (var i = 0; i < 100; i++) {
+      var cell = $('#' + utils.localCellId(i))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
+    }
+  }
+
+  app.renderLocalBoard = function (board) {
+    board.forEach(function (p, i) {
+      var cell = $('#' + utils.localCellId(i))
+      cell.addClass(utils.cellStyle(p.cellType))
+    })
+  }
+
+  app.cleanRemoteBoard = function () {
+  }
+
+  app.renderRemoteBoard = function (board, isAttacking) {
+  }
+
+  app.onAttackDefend = function (data, isAttacking) {
+    app.cleanLocalBoard()
+    app.renderLocalBoard(data.localBoard)
+
+    app.cleanRemoteBoard()
+    app.renderRemoteBoard(data.remoteBoard, isAttacking)
+
+    app.showAlert(isAttacking ? '#attack-alert' : '#defend-alert')
+  }
+
   /* Handle UI controls */
   new Clipboard('#copy-button')
 
@@ -36,12 +67,14 @@ $(function () {
   $('#shuffle-button').click(function () {
     window.tmp.fleet = utils.createFleet()
     var canvas = utils.renderFleet(window.tmp.fleet)
-    canvas.forEach(function (p, i) {
-      var cell = $('#' + utils.localCellId(i))
-      cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
-      cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
-      cell.addClass(utils.cellStyle(p))
-    })
+
+    app.cleanLocalBoard()
+    app.renderLocalBoard(canvas.map(function (cellType) {
+      return {
+        cellType: cellType,
+        isAttacked: false
+      }
+    }))
   })
 
   $('#fleet-name-input').keypress(function (e) {
@@ -65,10 +98,10 @@ $(function () {
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
-    app.showAlert('#attack-alert')
+    app.onAttackDefend(data, true)
   })
 
   app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
-    app.showAlert('#defend-alert')
+    app.onAttackDefend(data, false)
   })
 })
