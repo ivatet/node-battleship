@@ -156,7 +156,20 @@ const isCorrectFleet = function (fleet) {
     return true
   }
 
+  /* FIXME Do not rely on short-circuit evaluation too much! */
   return isCorrectSchema() && isCorrectLengthSet() && isCorrectArrangement()
+}
+
+const renderBoard = function (fleet, shots, isShowFleet) {
+  var canvas = isShowFleet ? utils.renderFleet(fleet) : utils.emptyFleet()
+  board = canvas.map(function (cellType) {
+    return {
+      cellType: cellType,
+      isAttacked: false
+    }
+  })
+
+  return board
 }
 
 io.on('connection', function (client) {
@@ -177,22 +190,27 @@ io.on('connection', function (client) {
   var sendRejectResponse = (msg) => sendRejectResponseToClient(client, msg)
 
   var sendAttackDefendResponses = function (battle) {
-    var attackIdx = BattleStates.P1_ATTACK ? 0 : 1
+    var attackIdx = (battle.battleState === BattleStates.P1_ATTACK ? 0 : 1)
 
     for (var i = 0; i < 2; i++) {
-      var conn = battle.players[i].conn
-      var event = utils.ServerResponses.ON_DEFEND
-      if (i === attackIdx) {
-        event = utils.ServerResponses.ON_ATTACK
-      }
-      conn.emit(event, {})
+      var event = (i === attackIdx ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND)
+      var localBoard = renderBoard(battle.players[i].fleet,
+                                   battle.players[1 - i].shots,
+                                   true)
+      var remoteBoard = renderBoard(battle.players[1 - i].fleet,
+                                   battle.players[i].shots,
+                                   false)
+      battle.players[i].conn.emit(event, {
+        localBoard: localBoard,
+        remoteBoard: remoteBoard
+      })
     }
   }
 
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
-    /* TODO Validate a whole data object */
+    /* TODO Validate the whole object */
     if (!isCorrectFleet(data.fleet)) {
       sendRejectResponse('Oops! Something went wrong.')
       return
@@ -200,7 +218,8 @@ io.on('connection', function (client) {
 
     var player = {
       conn: client,
-      fleet: data.fleet
+      fleet: data.fleet,
+      shots: []
     }
 
     /* Either create new battle or join existing battle */
