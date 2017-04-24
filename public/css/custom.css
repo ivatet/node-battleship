@@ -23,3 +23,8 @@
     border-radius: 2px;
   }
 }
+
+.custom-cell-link:hover {
+  cursor: pointer;
+  background-color: #F2DEDE;
+}

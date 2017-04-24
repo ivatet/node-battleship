@@ -32,10 +32,24 @@ $(function () {
     })
   }
 
+  app.CELL_STYLE_LINK = 'custom-cell-link'
+
   app.cleanRemoteBoard = function () {
   }
 
   app.renderRemoteBoard = function (board, isAttacking) {
+    board.forEach(function (p, i) {
+      var cell = $('#' + utils.remoteCellId(i))
+      switch (p.cellType) {
+      case utils.CellTypes.EMPTY:
+        if (isAttacking) {
+          cell.addClass(app.CELL_STYLE_LINK)
+        }
+        break;
+      case utils.CellTypes.SHIP:
+        break;
+      }
+    })
   }
 
   app.onAttackDefend = function (data, isAttacking) {
