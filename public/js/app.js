@@ -34,6 +34,12 @@ $(function () {
 
   app.CELL_STYLE_LINK = 'custom-cell-link'
 
+  app.attack = function(i) {
+    app.socket.emit(utils.ClientRequests.ON_ATTACK, {
+      cellId: i,
+    })
+  }
+
   app.cleanRemoteBoard = function () {
   }
 
@@ -44,6 +50,9 @@ $(function () {
       case utils.CellTypes.EMPTY:
         if (isAttacking) {
           cell.addClass(app.CELL_STYLE_LINK)
+          cell.on('click', function() {
+            app.attack(i)
+          })
         }
         break;
       case utils.CellTypes.SHIP:

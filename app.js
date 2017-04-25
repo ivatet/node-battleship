@@ -247,6 +247,20 @@ io.on('connection', function (client) {
     }
   })
 
+  client.on(utils.ClientRequests.ON_ATTACK, function (data) {
+    logger.debug('attack id: ' + data.cellId)
+
+    /* Validate data schema */
+
+    /* Validate if player can attack */
+
+    /* Validate if cell can be attacked */
+
+    /* Attack */
+
+    /* Send notifications */
+  })
+
   client.on('disconnect', function () {
     logger.debug('client disconnected')
 
