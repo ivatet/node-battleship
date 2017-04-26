@@ -14,13 +14,17 @@
 
   exports.CellTypes = {
     EMPTY: 'empty',
-    SHIP: 'ship'
+    SHIP: 'ship',
+    MISS: 'miss',
+    HIT: 'hit'
   }
 
   exports.cellStyle = function (cellType) {
     var mapping = {}
     mapping[exports.CellTypes.EMPTY] = 'bg-info'
     mapping[exports.CellTypes.SHIP] = 'bg-primary'
+    mapping[exports.CellTypes.MISS] = 'bg-warning'
+    mapping[exports.CellTypes.HIT] = 'bg-danger'
 
     return mapping[cellType]
   }

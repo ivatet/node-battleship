@@ -17,22 +17,19 @@ $(function () {
     $(alertId).removeClass('hidden')
   }
 
-  app.cleanLocalBoard = function () {
+  app.CELL_STYLE_LINK = 'custom-cell-link'
+
+  app.cleanBoard = function (accessor) {
     for (var i = 0; i < 100; i++) {
-      var cell = $('#' + utils.localCellId(i))
+      var cell = $('#' + accessor(i))
+      cell.off('click')
+      cell.removeClass(app.CELL_STYLE_LINK)
       cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
       cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.MISS))
+      cell.removeClass(utils.cellStyle(utils.CellTypes.HIT))
     }
   }
-
-  app.renderLocalBoard = function (board) {
-    board.forEach(function (p, i) {
-      var cell = $('#' + utils.localCellId(i))
-      cell.addClass(utils.cellStyle(p.cellType))
-    })
-  }
-
-  app.CELL_STYLE_LINK = 'custom-cell-link'
 
   app.attack = function(i) {
     app.socket.emit(utils.ClientRequests.ON_ATTACK, {
@@ -40,33 +37,27 @@ $(function () {
     })
   }
 
-  app.cleanRemoteBoard = function () {
-  }
-
-  app.renderRemoteBoard = function (board, isAttacking) {
+  app.renderBoard = function (accessor, board, isAttacking) {
     board.forEach(function (p, i) {
-      var cell = $('#' + utils.remoteCellId(i))
-      switch (p.cellType) {
-      case utils.CellTypes.EMPTY:
-        if (isAttacking) {
-          cell.addClass(app.CELL_STYLE_LINK)
-          cell.on('click', function() {
-            app.attack(i)
-          })
-        }
-        break;
-      case utils.CellTypes.SHIP:
-        break;
+      var cell = $('#' + accessor(i))
+
+      if (isAttacking && p.cellType === utils.CellTypes.EMPTY) {
+        cell.addClass(app.CELL_STYLE_LINK)
+        cell.on('click', function() {
+          app.attack(i)
+        })
       }
+
+      cell.addClass(utils.cellStyle(p.cellType))
     })
   }
 
   app.onAttackDefend = function (data, isAttacking) {
-    app.cleanLocalBoard()
-    app.renderLocalBoard(data.localBoard)
+    app.cleanBoard(utils.localCellId)
+    app.renderBoard(utils.localCellId, data.localBoard, false)
 
-    app.cleanRemoteBoard()
-    app.renderRemoteBoard(data.remoteBoard, isAttacking)
+    app.cleanBoard(utils.remoteCellId)
+    app.renderBoard(utils.remoteCellId, data.remoteBoard, isAttacking)
 
     app.showAlert(isAttacking ? '#attack-alert' : '#defend-alert')
   }
@@ -91,13 +82,13 @@ $(function () {
     window.tmp.fleet = utils.createFleet()
     var canvas = utils.renderFleet(window.tmp.fleet)
 
-    app.cleanLocalBoard()
-    app.renderLocalBoard(canvas.map(function (cellType) {
+    app.cleanBoard(utils.localCellId)
+    app.renderBoard(utils.localCellId, canvas.map(function (cellType) {
       return {
         cellType: cellType,
         isAttacked: false
       }
-    }))
+    }), false)
   })
 
   $('#fleet-name-input').keypress(function (e) {

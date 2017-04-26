@@ -161,7 +161,13 @@ const isCorrectFleet = function (fleet) {
 }
 
 const renderBoard = function (fleet, shots, isShowFleet) {
-  var canvas = isShowFleet ? utils.renderFleet(fleet) : utils.emptyFleet()
+  var fleetCanvas = utils.renderFleet(fleet)
+  var canvas = isShowFleet ? fleetCanvas : utils.emptyFleet()
+
+  shots.forEach(function (shot) {
+    canvas[shot] = (fleetCanvas[shot] === utils.CellTypes.SHIP ? utils.CellTypes.HIT : utils.CellTypes.MISS)
+  })
+
   board = canvas.map(function (cellType) {
     return {
       cellType: cellType,
@@ -248,24 +254,30 @@ io.on('connection', function (client) {
   })
 
   client.on(utils.ClientRequests.ON_ATTACK, function (data) {
-    logger.debug('attack id: ' + data.cellId)
+    var battle = battles.findByConnection(client)
+    if (!battle)
+      return
 
-    /* Validate data schema */
+    if (battle.battleState !== BattleStates.P1_ATTACK && battle.battleState !== BattleStates.P2_ATTACK)
+      return
 
-    /* Validate if player can attack */
+    var attacker = battle.players[battle.battleState === BattleStates.P1_ATTACK ? 0 : 1]
+    if (attacker.conn !== client)
+      return
 
-    /* Validate if cell can be attacked */
+    if (attacker.shots.find(function (elem) { return elem === data.cellId }))
+      return
 
-    /* Attack */
+    attacker.shots.push(data.cellId)
 
-    /* Send notifications */
+    sendAttackDefendResponses(battle)
   })
 
   client.on('disconnect', function () {
     logger.debug('client disconnected')
 
     var battle = battles.findByConnection(client)
-    if (battle !== undefined) {
+    if (battle) {
       player = battle.players.find(function (p) {
         return p.conn !== client
       })
