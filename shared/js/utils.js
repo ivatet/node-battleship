@@ -36,11 +36,17 @@
 
   exports.LocalBoardId = 'local-board'
   exports.RemoteBoardId = 'remote-board'
-  exports.localCellId = function (cellId) {
-    return 'local-cell-' + cellId
+  exports.localCellSelectors = function (cellId) {
+    return {
+      div: 'local-div-' + cellId,
+      svg: 'local-svg-' + cellId
+    }
   }
-  exports.remoteCellId = function (cellId) {
-    return 'remote-cell-' + cellId
+  exports.remoteCellSelectors = function (cellId) {
+    return {
+      div: 'remote-div-' + cellId,
+      svg: 'remote-svg-' + cellId
+    }
   }
 
   exports.renderFleet = function (fleet) {

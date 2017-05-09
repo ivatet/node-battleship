@@ -10,10 +10,6 @@
   border-radius: 2px;
 }
 
-.custom-empty-cell {
-  padding-bottom: 9%;
-}
-
 @media (max-width: 767px) {
   .custom-responsive-cell {
     margin: 0.3%;
@@ -29,4 +25,8 @@
 .custom-link-cell:hover {
   cursor: pointer;
   background-color: #F2DEDE;
+}
+
+.custom-svg {
+  display: block;
 }

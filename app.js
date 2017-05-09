@@ -49,13 +49,13 @@ const handleIndex = function (req, res) {
   var canvas = utils.renderFleet(fleet)
   var localCells = canvas.map(function (p, i) {
     return {
-      htmlId: utils.localCellId(i),
+      htmlSelectors: utils.localCellSelectors(i),
       htmlClass: utils.cellStyle(canvas[i])
     }
   })
   var remoteCells = utils.emptyFleet().map(function (p, i) {
     return {
-      htmlId: utils.remoteCellId(i),
+      htmlSelectors: utils.remoteCellSelectors(i),
       htmlClass: utils.cellStyle(utils.CellTypes.EMPTY)
     }
   })

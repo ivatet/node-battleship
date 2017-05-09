@@ -18,13 +18,11 @@ $(function () {
   }
 
   app.CELL_STYLE_LINK = 'custom-link-cell'
-  app.CELL_STYLE_EMPTY = 'custom-empty-cell'
 
-  app.cleanBoard = function (accessor) {
+  app.cleanBoard = function (selectors) {
     for (var i = 0; i < 100; i++) {
-      var cell = $('#' + accessor(i))
+      var cell = $('#' + selectors(i).div)
       cell.off('click')
-      cell.removeClass(app.CELL_STYLE_EMPTY)
       cell.removeClass(app.CELL_STYLE_LINK)
       cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
       cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
@@ -39,13 +37,12 @@ $(function () {
     })
   }
 
-  app.renderBoard = function (accessor, board, isAttacking) {
+  app.renderBoard = function (selectors, board, isAttacking) {
     board.forEach(function (cellType, i) {
-      var cell = $('#' + accessor(i))
+      var cell = $('#' + selectors(i).div)
 
       switch (cellType) {
       case utils.CellTypes.EMPTY:
-        cell.addClass(app.CELL_STYLE_EMPTY)
         if (isAttacking) {
           cell.addClass(app.CELL_STYLE_LINK)
           cell.on('click', function() {
@@ -54,13 +51,10 @@ $(function () {
         }
         break
       case utils.CellTypes.SHIP:
-        cell.addClass(app.CELL_STYLE_EMPTY)
         break
       case utils.CellTypes.MISS:
-        cell.addClass(app.CELL_STYLE_EMPTY)
         break
       case utils.CellTypes.HIT:
-        cell.addClass(app.CELL_STYLE_EMPTY)
         break
       }
 
@@ -69,11 +63,11 @@ $(function () {
   }
 
   app.onAttackDefend = function (data, isAttacking) {
-    app.cleanBoard(utils.localCellId)
-    app.renderBoard(utils.localCellId, data.localBoard, false)
+    app.cleanBoard(utils.localCellSelectors)
+    app.renderBoard(utils.localCellSelectors, data.localBoard, false)
 
-    app.cleanBoard(utils.remoteCellId)
-    app.renderBoard(utils.remoteCellId, data.remoteBoard, isAttacking)
+    app.cleanBoard(utils.remoteCellSelectors)
+    app.renderBoard(utils.remoteCellSelectors, data.remoteBoard, isAttacking)
 
     app.showAlert(isAttacking ? '#attack-alert' : '#defend-alert')
   }
@@ -98,8 +92,8 @@ $(function () {
     window.tmp.fleet = utils.createFleet()
     var canvas = utils.renderFleet(window.tmp.fleet)
 
-    app.cleanBoard(utils.localCellId)
-    app.renderBoard(utils.localCellId, canvas, false)
+    app.cleanBoard(utils.localCellSelectors)
+    app.renderBoard(utils.localCellSelectors, canvas, false)
   })
 
   $('#fleet-name-input').keypress(function (e) {
