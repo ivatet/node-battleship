@@ -168,14 +168,7 @@ const renderBoard = function (fleet, shots, isShowFleet) {
     canvas[shot] = (fleetCanvas[shot] === utils.CellTypes.SHIP ? utils.CellTypes.HIT : utils.CellTypes.MISS)
   })
 
-  board = canvas.map(function (cellType) {
-    return {
-      cellType: cellType,
-      isAttacked: false
-    }
-  })
-
-  return board
+  return canvas
 }
 
 io.on('connection', function (client) {

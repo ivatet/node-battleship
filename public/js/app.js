@@ -17,12 +17,14 @@ $(function () {
     $(alertId).removeClass('hidden')
   }
 
-  app.CELL_STYLE_LINK = 'custom-cell-link'
+  app.CELL_STYLE_LINK = 'custom-link-cell'
+  app.CELL_STYLE_EMPTY = 'custom-empty-cell'
 
   app.cleanBoard = function (accessor) {
     for (var i = 0; i < 100; i++) {
       var cell = $('#' + accessor(i))
       cell.off('click')
+      cell.removeClass(app.CELL_STYLE_EMPTY)
       cell.removeClass(app.CELL_STYLE_LINK)
       cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
       cell.removeClass(utils.cellStyle(utils.CellTypes.SHIP))
@@ -38,17 +40,31 @@ $(function () {
   }
 
   app.renderBoard = function (accessor, board, isAttacking) {
-    board.forEach(function (p, i) {
+    board.forEach(function (cellType, i) {
       var cell = $('#' + accessor(i))
 
-      if (isAttacking && p.cellType === utils.CellTypes.EMPTY) {
-        cell.addClass(app.CELL_STYLE_LINK)
-        cell.on('click', function() {
-          app.attack(i)
-        })
+      switch (cellType) {
+      case utils.CellTypes.EMPTY:
+        cell.addClass(app.CELL_STYLE_EMPTY)
+        if (isAttacking) {
+          cell.addClass(app.CELL_STYLE_LINK)
+          cell.on('click', function() {
+            app.attack(i)
+          })
+        }
+        break
+      case utils.CellTypes.SHIP:
+        cell.addClass(app.CELL_STYLE_EMPTY)
+        break
+      case utils.CellTypes.MISS:
+        cell.addClass(app.CELL_STYLE_EMPTY)
+        break
+      case utils.CellTypes.HIT:
+        cell.addClass(app.CELL_STYLE_EMPTY)
+        break
       }
 
-      cell.addClass(utils.cellStyle(p.cellType))
+      cell.addClass(utils.cellStyle(cellType))
     })
   }
 
@@ -83,12 +99,7 @@ $(function () {
     var canvas = utils.renderFleet(window.tmp.fleet)
 
     app.cleanBoard(utils.localCellId)
-    app.renderBoard(utils.localCellId, canvas.map(function (cellType) {
-      return {
-        cellType: cellType,
-        isAttacked: false
-      }
-    }), false)
+    app.renderBoard(utils.localCellId, canvas, false)
   })
 
   $('#fleet-name-input').keypress(function (e) {
