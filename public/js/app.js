@@ -57,14 +57,14 @@ $(function () {
         break
       case utils.CellTypes.MISS:
         var paper = Snap('#' + selectors(i).svg)
-        paper.circle(50, 50, 10).attr({
+        paper.circle(50, 50, 7).attr({
           fill: "#333"
         })
         break
       case utils.CellTypes.HIT:
         var paper = Snap('#' + selectors(i).svg)
         var attrs = {
-          strokeWidth: 10,
+          strokeWidth: 8,
           stroke: "#333",
           strokeLinecap:"round"
         }
