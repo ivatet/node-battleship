@@ -34,6 +34,7 @@ logger.level = 'debug'
 app.use('/js', express.static(path.join(__dirname, 'node_modules', 'bootstrap', 'dist', 'js')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules', 'jquery', 'dist')))
 app.use('/js', express.static(path.join(__dirname, 'node_modules', 'clipboard', 'dist')))
+app.use('/js', express.static(path.join(__dirname, 'node_modules', 'snapsvg', 'dist')))
 app.use('/js', express.static(path.join(__dirname, 'public', 'js')))
 app.use('/js', express.static(path.join(__dirname, 'shared', 'js')))
 

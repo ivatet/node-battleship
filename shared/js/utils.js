@@ -23,8 +23,8 @@
     var mapping = {}
     mapping[exports.CellTypes.EMPTY] = 'bg-info'
     mapping[exports.CellTypes.SHIP] = 'bg-primary'
-    mapping[exports.CellTypes.MISS] = 'bg-warning'
-    mapping[exports.CellTypes.HIT] = 'bg-danger'
+    mapping[exports.CellTypes.MISS] = 'bg-info'
+    mapping[exports.CellTypes.HIT] = 'bg-primary'
 
     return mapping[cellType]
   }

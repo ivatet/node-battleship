@@ -22,6 +22,9 @@ $(function () {
   app.cleanBoard = function (selectors) {
     for (var i = 0; i < 100; i++) {
       var cell = $('#' + selectors(i).div)
+      var paper = Snap('#' + selectors(i).svg)
+
+      paper.clear()
       cell.off('click')
       cell.removeClass(app.CELL_STYLE_LINK)
       cell.removeClass(utils.cellStyle(utils.CellTypes.EMPTY))
@@ -53,8 +56,20 @@ $(function () {
       case utils.CellTypes.SHIP:
         break
       case utils.CellTypes.MISS:
+        var paper = Snap('#' + selectors(i).svg)
+        paper.circle(50, 50, 10).attr({
+          fill: "#333"
+        })
         break
       case utils.CellTypes.HIT:
+        var paper = Snap('#' + selectors(i).svg)
+        var attrs = {
+          strokeWidth: 10,
+          stroke: "#333",
+          strokeLinecap:"round"
+        }
+        paper.line(20, 20, 80, 80).attr(attrs)
+        paper.line(80, 20, 20, 80).attr(attrs)
         break
       }
 
