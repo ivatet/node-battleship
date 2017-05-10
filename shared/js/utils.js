@@ -134,7 +134,9 @@
     return false
   }
 
-  exports.emptyFleet = () => Array(100).fill(exports.CellTypes.EMPTY)
+  exports.emptyFleet = function () {
+    return Array(100).fill(exports.CellTypes.EMPTY)
+  }
 
   exports.createFleet = function () {
     var fleet = []
@@ -180,4 +182,4 @@
     return fleet
   }
 
-})(typeof exports === 'undefined' ? window.utils = {} : exports)
+})(typeof exports === 'undefined' ? this['utils'] = {} : exports)
