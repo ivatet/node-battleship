@@ -248,23 +248,39 @@ io.on('connection', function (client) {
   })
 
   client.on(utils.ClientRequests.ON_ATTACK, function (data) {
+    var opposite = function(arr, item) {
+      return arr[0] === item ? arr[1] : arr[0]
+    }
+
+    /* check if the battle exists */
     var battle = battles.findByConnection(client)
     if (!battle)
       return
 
+    /* check if the battle is ongoing */
     if (battle.battleState !== BattleStates.P1_ATTACK && battle.battleState !== BattleStates.P2_ATTACK)
       return
 
+    /* check if the player is capable of doing an attack */
     var attacker = battle.players[battle.battleState === BattleStates.P1_ATTACK ? 0 : 1]
     if (attacker.conn !== client)
       return
 
+    /* check if the cell has not been attacked before */
     if (attacker.shots.find(function (elem) { return elem === data.cellId }))
       return
 
     attacker.shots.push(data.cellId)
 
-    sendAttackDefendResponses(battle)
+    /* check whether it is hit or miss */
+    var victim = opposite(battle.players, attacker)
+    var victimFleet = utils.renderFleet(victim.fleet)
+    if (victimFleet[data.cellId] === utils.CellTypes.SHIP) {
+      sendAttackDefendResponses(battle)
+    } else {
+      battle.battleState = opposite([BattleStates.P1_ATTACK, BattleStates.P2_ATTACK], battle.battleState)
+      sendAttackDefendResponses(battle)
+    }
   })
 
   client.on('disconnect', function () {
