@@ -252,6 +252,9 @@ io.on('connection', function (client) {
     }
   }
 
+  var sendFinishResponses = function (battle, winnerPlayer) {
+  }
+
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
     logger.debug('client join request with data: ' + JSON.stringify(data))
 
@@ -320,11 +323,12 @@ io.on('connection', function (client) {
 
     /* check whether it is hit or miss */
     var victim = opposite(battle.players, attacker)
-    if (utils.renderFleet(victim.fleet)[data.cellId] === utils.CellTypes.SHIP) {
+    var victimFleetCanvas = utils.renderFleet(victim.fleet)
+    if (victimFleetCanvas[data.cellId] === utils.CellTypes.SHIP) {
       /* check whether the ship has sunk or not */
       ship = findShip(victim.fleet, data.cellId)
       if (isShipSunken(ship, attacker.shots)) {
-        /* register sunken ship (we want all shots be unique) */
+        /* draw sunken ship (we want all shots be unique) */
         sunkenShipShots(ship).forEach(function (candidateShot) {
           if (attacker.shots.find(function (shot) { return shot === candidateShot}) === undefined) {
             attacker.shots.push(candidateShot)
@@ -333,7 +337,12 @@ io.on('connection', function (client) {
       }
 
       /* check if game is over */
-      sendAttackDefendResponses(battle)
+      var canvas = renderBoard(victim.fleet, attacker.shots, true)
+      if (canvas.find(function (elem) { return elem === utils.CellTypes.SHIP })) {
+        sendAttackDefendResponses(battle)
+      } else {
+        sendFinishResponses(battle, attacker)
+      }
     } else {
       battle.battleState = opposite([BattleStates.P1_ATTACK, BattleStates.P2_ATTACK], battle.battleState)
       sendAttackDefendResponses(battle)
