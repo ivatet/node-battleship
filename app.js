@@ -114,6 +114,10 @@ const battles = {
   }
 }
 
+const opposite = function(arr, item) {
+  return arr[0] === item ? arr[1] : arr[0]
+}
+
 const isCorrectFleet = function (fleet) {
   var isCorrectSchema = function () {
     return Array.isArray(fleet)
@@ -234,25 +238,21 @@ io.on('connection', function (client) {
 
   var sendRejectResponse = (msg) => sendRejectResponseToClient(client, msg)
 
-  var sendAttackDefendResponses = function (battle) {
-    var attackIdx = (battle.battleState === BattleStates.P1_ATTACK ? 0 : 1)
-
-    for (var i = 0; i < 2; i++) {
-      var event = (i === attackIdx ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND)
-      var localBoard = renderBoard(battle.players[i].fleet,
-                                   battle.players[1 - i].shots,
-                                   true)
-      var remoteBoard = renderBoard(battle.players[1 - i].fleet,
-                                   battle.players[i].shots,
-                                   false)
-      battle.players[i].conn.emit(event, {
-        localBoard: localBoard,
-        remoteBoard: remoteBoard
-      })
+  var playerBoardView = function (battle, player) {
+    var opponent = opposite(battle.players, player)
+    var boardView = {
+      localBoard: renderBoard(player.fleet, opponent.shots, true),
+      remoteBoard: renderBoard(opponent.fleet, player.shots, false)
     }
+    return boardView
   }
 
-  var sendFinishResponses = function (battle, winnerPlayer) {
+  var sendAttackDefendResponses = function (battle) {
+    battle.players[0].conn.emit(battle.battleState === BattleStates.P1_ATTACK ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND,
+      playerBoardView(battle, battle.players[0]))
+
+    battle.players[1].conn.emit(battle.battleState === BattleStates.P2_ATTACK ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND,
+      playerBoardView(battle, battle.players[1]))
   }
 
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
@@ -296,10 +296,6 @@ io.on('connection', function (client) {
   })
 
   client.on(utils.ClientRequests.ON_ATTACK, function (data) {
-    var opposite = function(arr, item) {
-      return arr[0] === item ? arr[1] : arr[0]
-    }
-
     /* check if the battle exists */
     var battle = battles.findByConnection(client)
     if (!battle)
@@ -336,12 +332,18 @@ io.on('connection', function (client) {
         })
       }
 
-      /* check if game is over */
+      /* check if the game is over */
       var canvas = renderBoard(victim.fleet, attacker.shots, true)
       if (canvas.find(function (elem) { return elem === utils.CellTypes.SHIP })) {
         sendAttackDefendResponses(battle)
       } else {
-        sendFinishResponses(battle, attacker)
+        battles.removeBattle(battle)
+
+        attacker.conn.emit(utils.ServerResponses.ON_WIN, playerBoardView(battle, attacker))
+        attacker.conn.disconnect(true)
+
+        victim.conn.emit(utils.ServerResponses.ON_LOSE, playerBoardView(battle, victim))
+        victim.conn.disconnect(true)
       }
     } else {
       battle.battleState = opposite([BattleStates.P1_ATTACK, BattleStates.P2_ATTACK], battle.battleState)
@@ -356,7 +358,8 @@ io.on('connection', function (client) {
     if (battle) {
       player = battle.players.find(function (p) { return p.conn !== client })
       if (player) {
-        sendRejectResponseToClient(player.conn, 'The remote player has been disconnected!')
+        sendRejectResponseToClient(player.conn, 'The remote player has left the battle!')
+        player.conn.disconnect(true)
       }
       battles.removeBattle(battle)
     }

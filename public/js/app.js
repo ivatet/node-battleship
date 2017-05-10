@@ -128,7 +128,6 @@ $(function () {
   app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
     $('#error-span').text(data.msg)
     app.showAlert('#error-alert')
-    app.socket.disconnect()
   })
 
   app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
@@ -137,5 +136,15 @@ $(function () {
 
   app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
     app.onAttackDefend(data, false)
+  })
+
+  app.socket.on(utils.ServerResponses.ON_WIN, function (data) {
+    app.onAttackDefend(data, false)
+    app.showAlert('#win-alert')
+  })
+
+  app.socket.on(utils.ServerResponses.ON_LOSE, function (data) {
+    app.onAttackDefend(data, false)
+    app.showAlert('#lose-alert')
   })
 })

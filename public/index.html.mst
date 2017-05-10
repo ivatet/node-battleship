@@ -59,6 +59,12 @@
       <div id="defend-alert" class="alert bg-warning text-center lead hidden custom-alert">
         <span>Defend!</span>
       </div>
+      <div id="win-alert" class="alert bg-success text-center lead hidden custom-alert">
+        <span>You win!</span> <span>Try one more time and <a href="/">create a new battle</a>.</span>
+      </div>
+      <div id="lose-alert" class="alert bg-warning text-center lead hidden custom-alert">
+        <span>You lose!</span> <span>Try one more time and <a href="/">create a new battle</a>.</span>
+      </div>
       <!-- Fleet -->
       <div class="row">
         <div class="col-xs-5 col-xs-offset-1">

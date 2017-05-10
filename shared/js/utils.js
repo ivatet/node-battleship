@@ -9,7 +9,8 @@
     ON_REJECT: 'on_reject',
     ON_ATTACK: 'on_attack',
     ON_DEFEND: 'on_defend',
-    ON_FINISH: 'on_finish'
+    ON_WIN: 'on_win',
+    ON_LOSE: 'on_lose'
   }
 
   exports.CellTypes = {
