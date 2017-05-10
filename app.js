@@ -172,6 +172,51 @@ const renderBoard = function (fleet, shots, isShowFleet) {
   return canvas
 }
 
+const findShip = function (fleet, cellId) {
+  return fleet.find(function (ship) {
+    var d = utils.pointFromDirection(ship.direction)
+
+    for (var i = 0; i < ship.length; i++) {
+      var p = utils.pointSum(ship, utils.pointScale(d, i))
+
+      if (p.y * 10 + p.x === cellId) {
+        return true
+      }
+    }
+
+    return false
+  })
+}
+
+const isShipSunken = function (ship, shots) {
+  var d = utils.pointFromDirection(ship.direction)
+
+  for (var i = 0; i < ship.length; i++) {
+    var p = utils.pointSum(ship, utils.pointScale(d, i))
+
+    if (shots.find(function (shot) { return p.y * 10 + p.x === shot }) === undefined) {
+      return false
+    }
+  }
+
+  return true
+}
+
+const sunkenShipShots = function (ship) {
+  var shots = []
+  var tail = utils.shipTail(ship)
+
+  for (var y = ship.y - 1; y <= tail.y + 1; y++) {
+    for (var x = ship.x - 1; x <= tail.x + 1; x++) {
+      if (utils.isCorrectPointLocation({x: x, y: y})) {
+        shots.push(y * 10 + x)
+      }
+    }
+  }
+
+  return shots
+}
+
 io.on('connection', function (client) {
   logger.debug('new client connected')
 
@@ -267,15 +312,27 @@ io.on('connection', function (client) {
       return
 
     /* check if the cell has not been attacked before */
-    if (attacker.shots.find(function (elem) { return elem === data.cellId }))
+    if (attacker.shots.find(function (elem) { return elem === data.cellId }) !== undefined)
       return
 
+    /* pew pew! */
     attacker.shots.push(data.cellId)
 
     /* check whether it is hit or miss */
     var victim = opposite(battle.players, attacker)
-    var victimFleet = utils.renderFleet(victim.fleet)
-    if (victimFleet[data.cellId] === utils.CellTypes.SHIP) {
+    if (utils.renderFleet(victim.fleet)[data.cellId] === utils.CellTypes.SHIP) {
+      /* check whether the ship has sunk or not */
+      ship = findShip(victim.fleet, data.cellId)
+      if (isShipSunken(ship, attacker.shots)) {
+        /* register sunken ship (we want all shots be unique) */
+        sunkenShipShots(ship).forEach(function (candidateShot) {
+          if (attacker.shots.find(function (shot) { return shot === candidateShot}) === undefined) {
+            attacker.shots.push(candidateShot)
+          }
+        })
+      }
+
+      /* check if game is over */
       sendAttackDefendResponses(battle)
     } else {
       battle.battleState = opposite([BattleStates.P1_ATTACK, BattleStates.P2_ATTACK], battle.battleState)
@@ -288,9 +345,7 @@ io.on('connection', function (client) {
 
     var battle = battles.findByConnection(client)
     if (battle) {
-      player = battle.players.find(function (p) {
-        return p.conn !== client
-      })
+      player = battle.players.find(function (p) { return p.conn !== client })
       if (player) {
         sendRejectResponseToClient(player.conn, 'The remote player has been disconnected!')
       }

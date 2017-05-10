@@ -56,9 +56,8 @@
       var d = exports.pointFromDirection(ship.direction)
 
       for (var i = 0; i < ship.length; i++) {
-        var x = ship.x + d.x * i
-        var y = ship.y + d.y * i
-        canvas[y * 10 + x] = exports.CellTypes.SHIP
+        var p = exports.pointSum(ship, exports.pointScale(d, i))
+        canvas[p.y * 10 + p.x] = exports.CellTypes.SHIP
       }
     })
 
@@ -93,10 +92,14 @@
     return p.x >= 0 && p.x < 10 && p.y >= 0 && p.y < 10
   }
 
-  exports.isCorrectShipLocation = function (ship) {
+  exports.shipTail = function(ship) {
     var d = exports.pointFromDirection(ship.direction)
-    var tail = exports.pointSum(ship, exports.pointScale(d, ship.length))
-    return exports.isCorrectPointLocation(ship) && exports.isCorrectPointLocation(tail)
+    var tail = exports.pointSum(ship, exports.pointScale(d, ship.length - 1))
+    return tail
+  }
+
+  exports.isCorrectShipLocation = function (ship) {
+    return exports.isCorrectPointLocation(ship) && exports.isCorrectPointLocation(exports.shipTail(ship))
   }
 
   exports.isPointColliding = function (p, canvas) {
