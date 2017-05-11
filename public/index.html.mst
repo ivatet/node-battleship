@@ -41,7 +41,7 @@
         <form class="form-inline">
           <span>Send the link to your opponent</span>
           <div class="input-group">
-            <input id="battle-input" type="text" class="form-control input-lg" readonly>
+            <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
             <span class="input-group-btn">
               <button id="copy-button" type="button" class="btn btn-lg btn-primary" data-clipboard-target="#battle-input">
                 <span class="glyphicon glyphicon-copy"></span>

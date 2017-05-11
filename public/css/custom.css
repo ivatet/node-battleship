@@ -20,6 +20,10 @@
   .custom-responsive-cell {
     margin: 1px;
   }
+
+  .custom-input {
+    min-width: 300px;
+  }
 }
 
 .custom-link-cell:hover {
