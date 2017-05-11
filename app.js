@@ -238,21 +238,21 @@ io.on('connection', function (client) {
 
   var sendRejectResponse = (msg) => sendRejectResponseToClient(client, msg)
 
-  var playerBoardView = function (battle, player) {
+  var playerBoardView = function (battle, player, isShowFleet) {
     var opponent = opposite(battle.players, player)
     var boardView = {
       localBoard: renderBoard(player.fleet, opponent.shots, true),
-      remoteBoard: renderBoard(opponent.fleet, player.shots, false)
+      remoteBoard: renderBoard(opponent.fleet, player.shots, isShowFleet)
     }
     return boardView
   }
 
   var sendAttackDefendResponses = function (battle) {
     battle.players[0].conn.emit(battle.battleState === BattleStates.P1_ATTACK ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND,
-      playerBoardView(battle, battle.players[0]))
+      playerBoardView(battle, battle.players[0], false))
 
     battle.players[1].conn.emit(battle.battleState === BattleStates.P2_ATTACK ? utils.ServerResponses.ON_ATTACK : utils.ServerResponses.ON_DEFEND,
-      playerBoardView(battle, battle.players[1]))
+      playerBoardView(battle, battle.players[1], false))
   }
 
   client.on(utils.ClientRequests.ON_JOIN, function (data) {
@@ -339,10 +339,10 @@ io.on('connection', function (client) {
       } else {
         battles.removeBattle(battle)
 
-        attacker.conn.emit(utils.ServerResponses.ON_WIN, playerBoardView(battle, attacker))
+        attacker.conn.emit(utils.ServerResponses.ON_WIN, playerBoardView(battle, attacker, false))
         attacker.conn.disconnect(true)
 
-        victim.conn.emit(utils.ServerResponses.ON_LOSE, playerBoardView(battle, victim))
+        victim.conn.emit(utils.ServerResponses.ON_LOSE, playerBoardView(battle, victim, true))
         victim.conn.disconnect(true)
       }
     } else {
