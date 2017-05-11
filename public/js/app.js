@@ -95,6 +95,7 @@ $(function () {
 
     if (window.location.pathname.length > 1) {
       battleId = window.location.pathname.substring(1)
+      window.history.pushState(undefined, 'Battleship (game)', '/');
     }
 
     app.socket.emit(utils.ClientRequests.ON_JOIN, {
