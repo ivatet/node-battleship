@@ -23,7 +23,7 @@
     <div class="container">
       <!-- Header -->
       <div class="page-header">
-        <h1>Battleship</h1>
+        <h1><a href="/">Battleship</a></h1>
         <p class="lead">A guessing game for two players</p>
       </div>
       <!-- Alerts -->
