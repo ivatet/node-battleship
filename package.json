@@ -1,9 +1,9 @@
 {
-  "name": "node-test",
-  "repository": "git@github.com:xpdu/node-test.git",
+  "name": "node-battleship",
+  "repository": "git@github.com:xpdu/node-battleship.git",
   "version": "1.0.0",
-  "description": "Node.js test app",
-  "main": "index.js",
+  "description": "Battleship (a guessing game for two players)",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

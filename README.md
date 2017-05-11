@@ -1,7 +1,9 @@
-# Node.js test app
+# Battleship
 
-Hello world Node.js app.
+A guessing game for two players written in JavaScript hosted by Node.js.
+
 
 ## How to run
 
-    % nodejs app.js
+	$ npm install
+	$ nodejs app.js
