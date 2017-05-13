@@ -91,6 +91,8 @@
           <p class="lead">Remote player</p>
         </div>
       </div> <!-- row -->
+      <hr />
+      <p class="text-center text-muted small">Developed by Ivan in 2017</p>
     </div> <!-- container -->
   </body>
 </html>
