@@ -1,0 +1,20 @@
+{{#emptyCell}}
+  <div class="custom-cell custom-responsive-cell">
+    <svg xmlns="http://www.w3.org/2000/svg" class="custom-svg" viewBox="0 0 100 100">
+      awdfasdf
+    </svg>
+  </div>
+{{/emptyCell}}
+{{#labelCell}}
+  <div class="custom-cell custom-responsive-cell">
+    <svg xmlns="http://www.w3.org/2000/svg" class="custom-svg" viewBox="0 0 100 100">
+      <text x="50" y="50" fill="#333" text-anchor="middle" dominant-baseline="central" font-size="55">{{labelCell}}</text>
+    </svg>
+  </div>
+{{/labelCell}}
+{{#boardCell}}
+  <div id="{{htmlSelectors.div}}" class="{{htmlClass}} custom-cell custom-responsive-cell">
+    <svg id="{{htmlSelectors.svg}}" xmlns="http://www.w3.org/2000/svg" class="custom-svg" viewBox="0 0 100 100">
+    </svg>
+  </div>
+{{/boardCell}}

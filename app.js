@@ -11,7 +11,8 @@ const utils = require(path.join(__dirname, 'shared', 'js', 'utils.js'))
 
 const port = 3000
 
-const template = fs.readFileSync(path.join(__dirname, 'public', 'index.html.mst'), 'utf8').toString()
+const indexTemplate = fs.readFileSync(path.join(__dirname, 'public', 'index.html.mst'), 'utf8').toString()
+const boardPartial = fs.readFileSync(path.join(__dirname, 'public', '_board.html.mst'), 'utf8').toString()
 
 const idRange = {
   min: 1000,
@@ -48,18 +49,48 @@ app.use('/favicon.ico', express.static(path.join(__dirname, 'public', 'favicon.i
 const handleIndex = function (req, res) {
   var fleet = utils.createFleet()
   var canvas = utils.renderFleet(fleet)
-  var localCells = canvas.map(function (p, i) {
+
+  var emptyCell = function () {
     return {
-      htmlSelectors: utils.localCellSelectors(i),
-      htmlClass: utils.cellStyle(canvas[i])
+      emptyCell: {
+      }
     }
-  })
-  var remoteCells = utils.emptyFleet().map(function (p, i) {
+  }
+
+  var labelCell = function (label) {
+    return { labelCell: label }
+  }
+
+  var boardCell = function (selector, cls) {
     return {
-      htmlSelectors: utils.remoteCellSelectors(i),
-      htmlClass: utils.cellStyle(utils.CellTypes.EMPTY)
+      boardCell: {
+        htmlSelectors: selector,
+        htmlClass: cls
+      }
     }
-  })
+  }
+
+  var labelRow = function () {
+    var row = [emptyCell()]
+    for (var i = 1; i < 11; i++)
+      row.push(labelCell(i))
+    return row
+  }
+
+  var columnLabels = 'ABCDEFGHIJ'
+
+  var localCells = labelRow()
+  var remoteCells = labelRow()
+  for (var j = 0; j < 10; j++) {
+    var ch = labelCell(columnLabels.charAt(j))
+    localCells.push(ch)
+    remoteCells.push(ch)
+    for (var i = 0; i < 10; i++) {
+      var idx = j * 10 + i
+      localCells.push(boardCell(utils.localCellSelectors(idx), utils.cellStyle(canvas[idx])))
+      remoteCells.push(boardCell(utils.remoteCellSelectors(idx), utils.cellStyle(utils.CellTypes.EMPTY)))
+    }
+  }
 
   var templateData = {
     fleet: JSON.stringify(fleet),
@@ -68,7 +99,9 @@ const handleIndex = function (req, res) {
     remoteBoardId: utils.RemoteBoardId,
     remoteCells: remoteCells
   }
-  res.end(mustache.to_html(template, templateData))
+  res.end(mustache.render(indexTemplate, templateData, {
+    board: boardPartial
+  }))
 }
 
 app.get('/', handleIndex)
