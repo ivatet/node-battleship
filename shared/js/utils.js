@@ -139,7 +139,10 @@
   }
 
   exports.emptyFleet = function () {
-    return Array(100).fill(exports.CellTypes.EMPTY)
+    var result = []
+    for (var i = 0; i < 100; i++)
+      result.push(exports.CellTypes.EMPTY)
+    return result
   }
 
   exports.createFleet = function () {
