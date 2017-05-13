@@ -8,6 +8,7 @@
   width: 8%;
   float: left;
   border-radius: 2px;
+  position:relative;
 }
 
 @media (max-width: 767px) {
@@ -32,5 +33,14 @@
 }
 
 .custom-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+.custom-canvas {
   display: block;
+  width: 100%;
+  visibility: hidden;
 }
