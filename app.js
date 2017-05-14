@@ -267,6 +267,7 @@ io.on('connection', function (client) {
     conn.emit(utils.ServerResponses.ON_REJECT, {
       msg: msg
     })
+    conn.disconnect(true)
   }
 
   var sendRejectResponse = (msg) => sendRejectResponseToClient(client, msg)
@@ -315,7 +316,7 @@ io.on('connection', function (client) {
       }
 
       if (battle.battleState !== BattleStates.WAIT) {
-        sendRejectResponse('It is not your business!')
+        sendRejectResponse('Oops! Something went wrong.')
         return
       }
 
@@ -392,7 +393,6 @@ io.on('connection', function (client) {
       player = battle.players.find(function (p) { return p.conn !== client })
       if (player) {
         sendRejectResponseToClient(player.conn, 'The remote player has left the battle!')
-        player.conn.disconnect(true)
       }
       battles.removeBattle(battle)
     }

@@ -4,9 +4,7 @@ $(function () {
   var app = window.app
   var utils = window.utils
 
-  app.socket = io('/', {
-    reconnection: false
-  })
+  app.socket = undefined
 
   app.showAlert = function (alertId) {
     $('.custom-alert').each(function () {
@@ -98,6 +96,46 @@ $(function () {
       window.history.pushState(undefined, 'Battleship (game)', '/');
     }
 
+    app.socket = io('/', {
+      reconnection: false
+    })
+
+    /* Handle server reponses */
+    app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
+      $('#battle-input').val(window.location.href + data.battleId)
+      app.showAlert('#link-alert')
+    })
+
+    app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
+      app.socket.off('disconnect')
+      $('#error-span').text(data.msg)
+      app.showAlert('#error-alert')
+    })
+
+    app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
+      app.onAttackDefend(data, true)
+    })
+
+    app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
+      app.onAttackDefend(data, false)
+    })
+
+    app.socket.on(utils.ServerResponses.ON_WIN, function (data) {
+      app.socket.off('disconnect')
+      app.onAttackDefend(data, false)
+      app.showAlert('#win-alert')
+    })
+
+    app.socket.on(utils.ServerResponses.ON_LOSE, function (data) {
+      app.socket.off('disconnect')
+      app.onAttackDefend(data, false)
+      app.showAlert('#lose-alert')
+    })
+
+    app.socket.on('disconnect', function () {
+      app.showAlert('#error-alert')
+    })
+
     app.socket.emit(utils.ClientRequests.ON_JOIN, {
       battleId: battleId,
       fleet: window.tmp.fleet,
@@ -118,34 +156,5 @@ $(function () {
       $('#join-button').click()
       e.preventDefault()
     }
-  })
-
-  /* Handle server reponses */
-  app.socket.on(utils.ServerResponses.ON_ACCEPT, function (data) {
-    $('#battle-input').val(window.location.href + data.battleId)
-    app.showAlert('#link-alert')
-  })
-
-  app.socket.on(utils.ServerResponses.ON_REJECT, function (data) {
-    $('#error-span').text(data.msg)
-    app.showAlert('#error-alert')
-  })
-
-  app.socket.on(utils.ServerResponses.ON_ATTACK, function (data) {
-    app.onAttackDefend(data, true)
-  })
-
-  app.socket.on(utils.ServerResponses.ON_DEFEND, function (data) {
-    app.onAttackDefend(data, false)
-  })
-
-  app.socket.on(utils.ServerResponses.ON_WIN, function (data) {
-    app.onAttackDefend(data, false)
-    app.showAlert('#win-alert')
-  })
-
-  app.socket.on(utils.ServerResponses.ON_LOSE, function (data) {
-    app.onAttackDefend(data, false)
-    app.showAlert('#lose-alert')
   })
 })
