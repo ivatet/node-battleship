@@ -9,7 +9,7 @@ const io = require('socket.io')(server)
 const validator = require('validator')
 const utils = require(path.join(__dirname, 'shared', 'js', 'utils.js'))
 
-const port = 3000
+const port = process.env.PORT || 3000
 
 const indexTemplate = fs.readFileSync(path.join(__dirname, 'public', 'index.html.mst'), 'utf8').toString()
 const boardPartial = fs.readFileSync(path.join(__dirname, 'public', '_board.html.mst'), 'utf8').toString()
