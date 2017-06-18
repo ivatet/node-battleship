@@ -39,7 +39,7 @@
       </div>
       <div id="link-alert" class="alert bg-success text-center lead hidden custom-alert">
         <form class="form-inline">
-          <span>Send the link to your opponent</span>
+          <span>Link to this battle</span>
           <div class="input-group">
             <input id="battle-input" type="text" class="form-control input-lg custom-input" readonly>
             <span class="input-group-btn">
